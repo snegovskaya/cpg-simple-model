@@ -1,4 +1,4 @@
-ÿþcontourpy==1.1.1
+contourpy==1.1.1
 cycler==0.12.1
 fonttools==4.47.2
 importlib-resources==6.1.1
