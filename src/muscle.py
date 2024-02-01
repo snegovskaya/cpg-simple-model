@@ -1,2 +1,3 @@
 def muscle_test():
-    return "I'm a Simplified Adapted Model muscle!"
+    print()"I'm a Simplified Adapted Model muscle!")
+    return
