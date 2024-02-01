@@ -3,3 +3,4 @@ from src.muscle import muscle_test
 
 neuron_test()
 muscle_test()
+print("I'm main")
