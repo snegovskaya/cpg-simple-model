@@ -1,3 +1,5 @@
 .venv
 .DS_Store
 src.egg-info
+.vscode
+!launch.json
