@@ -2,6 +2,9 @@ def neuron_test():
     print("I'm a HH neuron")
     return
 
+from numpy import *
+from matplotlib import pyplot as p
+from scipy import integrate
 
 def dX_dt(X, t, IappFunc, *IappPars): # Под X понимается вектор (v, m, n, h); здесь будет говнокод, поскольку я не могу передать функцию I с параметрами извне
 # def dX_dt(t, X, IappFunc, *IappPars): # для integrate.solve_ivp
@@ -10,7 +13,7 @@ def dX_dt(X, t, IappFunc, *IappPars): # Под X понимается векто
   m = X[1]
   n = X[2]
   h = X[3]
-
+ 
 
   def eq_v(m, n, h, v, t, IappFunc, IappPars):  # Выражение для тока задаю вручную
     gNa = 40
@@ -23,7 +26,7 @@ def dX_dt(X, t, IappFunc, *IappPars): # Под X понимается векто
 
 
     if callable(IappFunc):
-      return (-(gNa * m**3*h*(v - ENa) + gK* n**4*(v - EK) + gL*(v - EL)) + Iperiod(t, IappPars[0])) * 1/C  # FIXME: внести условие if callable
+      return (-(gNa * m**3*h*(v - ENa) + gK* n**4*(v - EK) + gL*(v - EL)) + IappFunc(t, IappPars[0])) * 1/C  # FIXME: внести условие if callable
     else:
       return (-(gNa * m**3*h*(v - ENa) + gK* n**4*(v - EK) + gL*(v - EL)) + IappFunc) * 1/C
 
