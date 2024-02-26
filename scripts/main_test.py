@@ -18,19 +18,26 @@ mrest = 0.06 # По книге mrest = 0.05
 nrest = 0.00 # По книге nrest = 0.00
 hrest = 0.54 # По книге hrest = 0.62
 Y0 = array([vrest,mrest,nrest,hrest])
-t = linspace(0, 500, 100000) # Временная шкала
+t = linspace(0, 100, 1000) # Временная шкала
 Iapp = 4
 
 X =  integrate.odeint(muscle.dX_dt, X0, t) 
 C_N, F = X.T
-Y =  integrate.odeint(neuron.dX_dt, X0, t, args=(Iapp,)) # args=(Iapp, tauInput)
+Y =  integrate.odeint(neuron.dX_dt, Y0, t, args=(Iapp,)) # args=(Iapp, tauInput)
 v, m, n, h = Y.T 
+def u(t):
+    return  abs(sin(t*2))
 
 fig1 = p.figure()
 p.plot(t, v)
 p.show(block=True)
 
 fig2 = p.figure()
-p.plot(t, sin(t))
-p.plot(t, C_N*5000)
+p.plot(t, u(t), label = '$u, \: \mathrm{мВ}$')
+p.plot(t, F*500, label = '$F (x500), \: \mathrm{?}$')
+p.legend()
+p.xlabel('$t, \: \mathrm{мс}$')
+p.ylabel('$u, \: F$')
+p.ylim([-1, 1])
+p.title('Мышечная сила и входное напряжение, зависимость от времени')
 p.show(block=True)
