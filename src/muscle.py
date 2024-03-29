@@ -15,31 +15,33 @@ class Muscle:
     A = 10 # FIXME units! 
     m = 2 # dim-less 
 
-    def __init__(self, CN0, F0, u): # FIXME: В каком формате передавать u? Как название ф-ции?
+    def __init__(self, CN0, F0, **kwargs): # FIXME: В каком формате передавать u? Как название ф-ции?
         """ 
         Parameters:
         CN0 : initial CN(t) meaning 
         F0 : initial F(t) meaning 
-        u : input voltage function 
+        **kwargs : input voltage function (keyword 'input') with its pars (if any)
         """
 
         self.test = 'I\'m class Muscle test' 
 
         self.CN = CN0 
         self.F = F0 
-        self.u = u # 1. FIXME Но это не точно; 2. Зависимость от t сюда вроде как писать не нужно 
+        self.u = kwargs.pop('input')
+        self.upars = kwargs
 
-
-    def eq_CN(self, **kwargs): 
+    def eq_CN(self): 
         """
         Right part of an ODE for CN variable
         FIXME Я пока ХЗ, откуда нужно брать и как сюда внедрять u 
         """
+        # Просто переназываю переменные покороче
         CN = self.CN 
         tauc = self.tauc 
         u = self.u 
+        upars = self.upars
 
-        return - CN / tauc + u(**kwargs) # FIXME: сделать u(t)! 
+        return - CN / tauc + u(**upars) # FIXME: сделать u(t)! 
         # FIXME: вообще, по-хорошему, должно быть u(*args) или что-то типа того
 
 
@@ -65,19 +67,21 @@ class Muscle:
         return - F / tau1 + A * x
 
 
-    def model(self, **kwargs): 
+    def model(self): 
         """
         Collects ODEs in one system
         """
         # Эту функцию пока фиксируем и от неё отталкиваемся
 
-        eq_1 = self.eq_CN(**kwargs)
+        eq_1 = self.eq_CN()
         eq_2 = self.eq_F()
 
         return array([eq_1, eq_2])
 
-def delegate(obj, vars0, **kwargs): # Нужно ли сюда именно впихивать t? 
-    obj.CN = vars0[0](**kwargs) 
-    obj.F = vars0[1] 
-    return obj.model(**kwargs)
+def delegate(obj, vars, t): # Нужно ли сюда именно впихивать t? 
+    obj.CN = vars[0]
+    obj.F = vars[1]
+    if obj.upars.get('t') != None:
+        obj.upars['t'] = t 
+    return obj.model()
     

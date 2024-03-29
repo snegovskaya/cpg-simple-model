@@ -19,8 +19,14 @@ def Iimpulse(t: float, impulseAmpl = 50, impulseLength = 5, tStart = 1):
 
 input = Iimpulse
 
-test_muscle = Muscle(CN0, F0, input)
+test_muscle = Muscle(CN0, F0, input=Iimpulse, t=t[0])
 # Таким образом имеем, что test_muscle.CN = CN0, test_muscle.F = F0 
    
-ptest_result = integrate.odeint(lambda *args: delegate(test_muscle, *args,), vars0, t)
-print(test_result)
+test_result = integrate.odeint(lambda *args: delegate(test_muscle, *args,), vars0, t)
+print(test_result) 
+CN, FN = test_result.T 
+
+fig = p.figure()
+p.plot(t, FN)
+p.show(block = True)
+
