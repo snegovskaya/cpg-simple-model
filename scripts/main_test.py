@@ -29,4 +29,3 @@ CN, FN = test_result.T
 fig = p.figure()
 p.plot(t, FN)
 p.show(block = True)
-

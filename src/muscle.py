@@ -20,7 +20,7 @@ class Muscle:
         Parameters:
         CN0 : initial CN(t) meaning 
         F0 : initial F(t) meaning 
-        **kwargs : input voltage function (keyword 'input') with its pars (if any)
+        u : input voltage function 
         """
 
         self.test = 'I\'m class Muscle test' 
@@ -28,14 +28,14 @@ class Muscle:
         self.CN = CN0 
         self.F = F0 
         self.u = kwargs.pop('input')
-        self.upars = kwargs
+        self.upars = kwargs # 1. FIXME Но это не точно; 2. Зависимость от t сюда вроде как писать не нужно 
+
 
     def eq_CN(self): 
         """
         Right part of an ODE for CN variable
         FIXME Я пока ХЗ, откуда нужно брать и как сюда внедрять u 
         """
-        # Просто переназываю переменные покороче
         CN = self.CN 
         tauc = self.tauc 
         u = self.u 
@@ -79,9 +79,10 @@ class Muscle:
         return array([eq_1, eq_2])
 
 def delegate(obj, vars, t): # Нужно ли сюда именно впихивать t? 
-    obj.CN = vars[0]
-    obj.F = vars[1]
-    if obj.upars.get('t') != None:
-        obj.upars['t'] = t 
+    obj.CN = vars[0] 
+    obj.F = vars[1] 
+    if  obj.upars.get('t') != None: 
+        obj.upars['t'] = t
+        # FIXME Что-то там было про переписать upars[t]
     return obj.model()
     
