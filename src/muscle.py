@@ -78,7 +78,7 @@ class Muscle:
 
         return array([eq_1, eq_2])
 
-def delegate(obj, vars, t): # Нужно ли сюда именно впихивать t? 
+def delegate_muscle(obj, vars, t): # Нужно ли сюда именно впихивать t? 
     obj.CN = vars[0] 
     obj.F = vars[1] 
     if  obj.upars.get('t') != None: 
