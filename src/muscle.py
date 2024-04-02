@@ -30,7 +30,6 @@ class Muscle:
         self.u = kwargs.pop('input')
         self.upars = kwargs # 1. FIXME Но это не точно; 2. Зависимость от t сюда вроде как писать не нужно 
 
-
     def eq_CN(self): 
         """
         Right part of an ODE for CN variable
