@@ -5,7 +5,7 @@ from numpy import *
 from matplotlib import pyplot as p
 from scipy import integrate
 
-t = linspace(0, 100, 100) 
+t = linspace(0, 20, 100) 
 
 
 v0 = -63.0540942 
@@ -18,7 +18,7 @@ CN0 = 1
 F0 = 0
 vars0_muscle = (CN0, F0) 
 
-def Iimpulse(t: float, impulseAmpl = 50, impulseLength = 5, tStart = 1):
+def Iimpulse(t: float, impulseAmpl = 5, impulseLength = 5, tStart = 1):
   if t > tStart and t < tStart + impulseLength:
     I = impulseAmpl
   else:
@@ -40,8 +40,8 @@ test_result = integrate.odeint(lambda *args: delegate_neuron(test_neuron, *args,
 v,m,n,h = test_result.T 
 
 fig = p.figure()
-# p.plot(t, [Iimpulse(tmeaning) for tmeaning in t])
-# p.plot(t, FN)
+p.plot(t, [Iimpulse(tmeaning) for tmeaning in t])
+p.plot(t, 1e3*FN)
 p.plot(t, v)
 p.show(block = True) 
 

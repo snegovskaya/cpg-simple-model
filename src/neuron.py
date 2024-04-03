@@ -122,5 +122,6 @@ def delegate_neuron(obj, vars, t):
   obj.h = vars[3] 
   if obj.IappPars.get('t') != None: 
     obj.IappPars['t'] = t 
+  print(obj.IappPars)
   return obj.model()
 
