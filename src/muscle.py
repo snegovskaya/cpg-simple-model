@@ -40,7 +40,10 @@ class Muscle:
         u = self.u 
         upars = self.upars
 
-        return - CN / tauc + u(**upars) # FIXME: сделать u(t)! 
+        if callable(u):
+            return - CN / tauc + u(**upars) 
+        else: 
+            return - CN / tauc + u 
         # FIXME: вообще, по-хорошему, должно быть u(*args) или что-то типа того
 
 
@@ -83,6 +86,5 @@ def delegate_muscle(obj, vars, t): # Нужно ли сюда именно вп�
     if  obj.upars.get('t') != None: 
         obj.upars['t'] = t
         # FIXME Что-то там было про переписать upars[t]
-    print(obj.upars)
     return obj.model()
     

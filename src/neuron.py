@@ -43,11 +43,11 @@ class Neuron:
     IappFunc = self.IappFunc 
     IappPars = self.IappPars
     
-    return (-(gNa * m**3*h*(v - ENa) + gK* n**4*(v - EK) + gL*(v - EL)) + IappFunc(**IappPars)) * 1/C
-    # if callable(IappFunc):
-    #   return (-(gNa * m**3*h*(v - ENa) + gK* n**4*(v - EK) + gL*(v - EL)) + IappFunc(**IappPars)) * 1/C  # FIXME: внести условие if callable
-    # else:
-    #   return (-(gNa * m**3*h*(v - ENa) + gK* n**4*(v - EK) + gL*(v - EL)) + IappFunc) * 1/C 
+    # return (-(gNa * m**3*h*(v - ENa) + gK* n**4*(v - EK) + gL*(v - EL)) + IappFunc(**IappPars)) * 1/C
+    if callable(IappFunc):
+      return (-(gNa * m**3*h*(v - ENa) + gK* n**4*(v - EK) + gL*(v - EL)) + IappFunc(**IappPars)) * 1/C  # FIXME: внести условие if callable
+    else:
+      return (-(gNa * m**3*h*(v - ENa) + gK* n**4*(v - EK) + gL*(v - EL)) + IappFunc) * 1/C 
 
 
   def __eq_x(self, x, ax, bx):
@@ -122,6 +122,5 @@ def delegate_neuron(obj, vars, t):
   obj.h = vars[3] 
   if obj.IappPars.get('t') != None: 
     obj.IappPars['t'] = t 
-  print(obj.IappPars)
   return obj.model()
 
