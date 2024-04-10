@@ -1,26 +1,23 @@
 from numpy import * 
 
-def muscle_test():
-    print("I'm a Simplified Adapted Model muscle")
-    return
-
-
 class Muscle: 
-    # Simplified Adapted Model (see Wilson2013)
+    # Simplified Adapted Model (see Wilson2013 Eqs. 5–7)
 
-    tauc = 0.1 # FIXME units! 
-    tau1 = 0.1 # FIXME units! 
-    tau2 = 0 # FIXME units! 
+    tauc = 0.1 # s 
+    tau1 = 0.1 # s 
+    tau2 = 0 # s 
     k =  5 # FIXME units! 
     A = 10 # FIXME units! 
-    m = 2 # dim-less 
+    m = 2 # unitless 
 
     def __init__(self, CN0, F0, **kwargs): # FIXME: В каком формате передавать u? Как название ф-ции?
         """ 
-        Parameters:
-        CN0 : initial CN(t) meaning 
-        F0 : initial F(t) meaning 
-        u : input voltage function 
+        Args: 
+            CN0 (float): Initial CN(t) meaning 
+            F0 (float): Initial F(t) meaning  
+            **kwargs (dict): 
+                kwargs.input (float OR callable): Input voltage meaning OR function 
+                kwargs.pop('input'): Arbitrary args to pass the 'input' function 
         """
 
         self.test = 'I\'m class Muscle test' 
@@ -32,8 +29,8 @@ class Muscle:
 
     def eq_CN(self): 
         """
-        Right part of an ODE for CN variable
-        FIXME Я пока ХЗ, откуда нужно брать и как сюда внедрять u 
+        Returns: 
+            callable OR float: Right part of an ODE for CN variable 
         """
         CN = self.CN 
         tauc = self.tauc 
@@ -43,13 +40,14 @@ class Muscle:
         if callable(u):
             return - CN / tauc + u(**upars) 
         else: 
-            return - CN / tauc + u 
+            return - CN / tauc + u # FIXME Ерунда с константой!!
         # FIXME: вообще, по-хорошему, должно быть u(*args) или что-то типа того
 
 
     def x(self):
-        """
-        Function x(CN)
+        """ 
+        Returns: 
+            callable OR float: Function x(CN)
         """
         CN = self.CN 
         m = self.m 
@@ -59,8 +57,9 @@ class Muscle:
 
 
     def eq_F(self): 
-        """
-        Right part of an ODE for F variable
+        """ 
+        Returns: 
+        callable OR float: Right part of an ODE for F variable
         """
         F = self.F 
         tau1 = self.tau1 
@@ -71,10 +70,12 @@ class Muscle:
 
     def model(self): 
         """
-        Collects ODEs in one system
-        """
-        # Эту функцию пока фиксируем и от неё отталкиваемся
+        Collects ODEs in one system 
 
+        Returns: 
+            array: 
+                [self.eq_CN, self.eq_F]
+        """
         eq_1 = self.eq_CN()
         eq_2 = self.eq_F()
 
