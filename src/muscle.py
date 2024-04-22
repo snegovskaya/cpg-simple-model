@@ -81,11 +81,13 @@ class Muscle:
 
         return array([eq_1, eq_2])
 
-def delegate_muscle(obj, vars, t): # Нужно ли сюда именно впихивать t? 
+def delegate_Muscle(obj, vars, t, **kwargs): # Нужно ли сюда именно впихивать t? 
     obj.CN = vars[0] 
     obj.F = vars[1] 
+    obj.u = kwargs.pop('input') # Леплю говно
     if  obj.upars.get('t') != None: 
-        obj.upars['t'] = t
+        obj.upars['t'] = t # Химичим с t 
         # FIXME Что-то там было про переписать upars[t]
+    print('t [s] at muscle  = ', t)
     return obj.model()
     

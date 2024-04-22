@@ -1,30 +1,38 @@
-def neuron_test():
-    print("I'm a HH neuron")
-    return
-
 from numpy import *
 from matplotlib import pyplot as p
 from scipy import integrate
 
 class Neuron: 
-    # Standart Hodgkin-Huxley model with the parameters got from https://neuronaldynamics.epfl.ch/
+    """
+    # Standart Hodgkin-Huxley model with the parameters got from https://neuronaldynamics.epfl.ch/ 
 
-    gNa = 40 # FIXME: units! 
-    gK = 35 # FIXME: units! 
-    gL = 0.3 # FIXME: units! 
-    ENa = 55 # FIXME: units! 
-    EK = -77 # FIXME: units! 
-    EL = -65 # FIXME: units! 
-    C = 1 # FIXME: units! 
+    Attributes: 
+        gNa (float): [mS / cm^2] — Na+ channel conductance 
+        gK (float): [mS / cm^2] — K+ channel conductance 
+        gL (float): [mS / cm^2] — leak conductance 
+        ENa (float): [mV] — Na+ channel displacement from resting potential 
+        EK (float): [mV] — K+ channel displacement from resting potential 
+        EL (float): [mV] — leak channel displacement from resting potential 
+        C (float): [mkF / cm^2] — membrane capacity 
+    """
+    gNa = 40 
+    gK = 35 
+    gL = 0.3 
+    ENa = 55  
+    EK = -77 
+    EL = -65 
+    C = 1 
 
 
     def __init__(self, v0, m0, n0, h0, **kwargs): 
         """ 
         Args: 
-            v0 (float): initial v meaning 
-            m0 (float): initial m meaning 
-            n0 (float): initial n meaning 
-            h0 (float): initial h meaning
+            v0 (float): [mv] — initial v meaning 
+            m0 (float): [unitless in range [0,1]] — initial m meaning
+            n0 (float): [unitless in range [0,1]] — initial n meaning
+            h0 (float): [unitless in range [0,1]] — initial h meaning 
+            **kwargs: keyword arguments for a neuron input  
+                'input' (callable / float): obligatory v fuction or meaning input
         """
         self.v = v0 
         self.m = m0 
@@ -38,7 +46,7 @@ class Neuron:
     def eq_v(self): 
         """
         Returns: 
-           callable OR float: right part of an ODE for v variable
+           callable / float: right part of an ODE for v variable, t-dependent or indepentent
         """
         gNa = self.gNa 
         gK = self.gK 
@@ -65,7 +73,7 @@ class Neuron:
     def __eq_x(self, x, ax, bx): 
         """
         Returns: 
-            ?
+            callable: function template of m, n, h for inner usage
         """
         # return Cx * exp(-(ax + bx) * t) + ax/(ax + bx) Это ж решение с v в качестве параметра! Мне-то нужно исходное уравнение!
         return ax * (1 - x) - bx * x 
@@ -129,9 +137,8 @@ class Neuron:
     def eq_m(self): 
         """
         Returns: 
-           callable OR float: right part of an ODE for m variable
+           callable / float: right part of an ODE for m variable
         """
-        v = self.v 
         m = self.m 
         am = self.am() 
         bm = self.bm() 
@@ -140,9 +147,8 @@ class Neuron:
     def eq_n(self): 
         """
         Returns: 
-           callable OR float: right part of an ODE for n variable
+           callable / float: right part of an ODE for n variable
         """
-        v = self.v 
         n = self.n 
         an = self.an() 
         bn = self.bn() 
@@ -151,9 +157,8 @@ class Neuron:
     def eq_h(self): 
         """
         Returns: 
-           callable OR float: right part of an ODE for h variable
+           callable / float: right part of an ODE for h variable
         """
-        v = self.v 
         h = self.h 
         ah = self.ah() 
         bh = self.bh() 
@@ -171,12 +176,13 @@ class Neuron:
         eq_4 = self.eq_h() 
         return array([eq_1, eq_2, eq_3, eq_4])
 
-def delegate_neuron(obj, vars, t): 
+def delegate_Neuron(obj, vars, t): 
     obj.v = vars[0] 
     obj.m = vars[1] 
     obj.n = vars[2] 
     obj.h = vars[3] 
     if obj.IappPars.get('t') != None: 
         obj.IappPars['t'] = t 
+        print('t at neuron = ', obj.IappPars['t'])
     return obj.model()
 
