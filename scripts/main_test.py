@@ -5,7 +5,7 @@ from numpy import *
 from matplotlib import pyplot as p
 from scipy import integrate
 
-t = linspace(0, 25, 1000) 
+t = linspace(0, 100, 100) 
 
 v0 = -63.0540942 
 m0 = 0.06 
@@ -25,14 +25,17 @@ def Iimpulse(t: float, impulseAmpl = 5, impulseLength = 5, tStart = 1):
     return I 
 
 
-def Iperiod_impulse(t: float, impulseAmpl = 5, impulseLength = 5, period = 10, tStart = 1):
-    if (t - tStart) % period <= impulseLength:
+
+def Iperiod_impulse(t: float, impulseAmpl = 5, impulseLength = 5, period = 10, tStart = 1, tFinish = 50): 
+    if t > tFinish: 
+        I = 0
+    elif (t - tStart) % period <= impulseLength:
         I = impulseAmpl
     else:
         I = 0
     return I 
 
-input = Iperiod_impulse 
+input = Iimpulse 
 
 test_neuron = Neuron(v0, m0, n0, h0, input=input, t=t[0])
 
@@ -51,6 +54,7 @@ test_muscle.tau2 *= 1e3
 # CN, FN = test_result.T 
   
 
+# Полностью собранная схема
 def delegate_circuit(neuron, muscle, vars, t): 
     vars_neuron = vars[0:4]
     vars_muscle = vars[4:]
@@ -62,37 +66,64 @@ vars0 = vars0_neuron + vars0_muscle
 
 test_result = integrate.odeint(lambda *args: delegate_circuit(test_neuron, test_muscle, *args,), vars0, t)
 v,m,n,h, CN, FN = test_result.T 
-print(CN)
+
+# Строю кривую нейрона отдельно
+
+neuron_vars = integrate.odeint(lambda *args: delegate_Neuron(test_neuron, *args,), vars0_neuron, t) 
+v,m,n,h = neuron_vars.T 
+
+# # График v(t) для нейрона
+# fig = p.figure()
+# p.plot(t, [Iimpulse(tmeaning) for tmeaning in t], label = 'Iapp')
+# p.plot(t, v, label = 'v')
+# p.xlabel('$t, \: \mathrm{мс}$')
+# p.legend()
+# p.title('v(t) при импульсном внешнем токе $I_{app}(t)$ \n амплитудой %.2f $\mathrm{мкА/см^2}$ (показана $10\mathrm{x}$) и длительностями импульса от %.1f до %.1f $\mathrm{мс}$' % (5, 1, 5))
+# p.show(block = True)
 
 
-# def delegate_CN(muscle, v, t): # тест интегрирования одного уравнения CN при импульсном токе 
-#     muscle.u = v
-#     if muscle.upars.get('t') != None:
-#         muscle.upars['t'] = t
-#     return muscle.eq_CN()
+# тест интегрирования одного уравнения CN при импульсном токе 
+def delegate_CN(muscle, CN, t):
+    muscle.CN = CN 
+    print('CN= ',CN)
+    print('t = ', t)
+    print('muscle.u = ', muscle.u)
+    print('muscle.upars = ', muscle.upars)
+    if muscle.upars.get('t') != None:
+        muscle.upars['t'] = t
+    return muscle.eq_CN() 
 
 
-# test_muscle = Muscle(CN0, F0, input = Iimpulse, t=t[0]) 
+def getvt(tarray=t, varray=v, **kwargs): # Вот этот набросок надо доработать 
+    tmeaning = kwargs['t']
+    return varray[where(tarray==tmeaning)[0]] 
 
+
+test_muscle = Muscle(CN0, F0, input = getvt, t=t[0]) # Заменила импульс тока на функцию доступа к независимому v
+def instead_of_lambda(*args):
+    return delegate_CN(test_muscle, *args) 
+test_result = integrate.odeint(instead_of_lambda, CN0, t) 
 # test_result = integrate.odeint(lambda *args: delegate_CN(test_muscle, *args,), CN0, t) 
-# print(test_result.T)
-# CN = test_result.T[0]  
+CN = test_result.T[0]  
 
-print('at ')
 
-fig = p.figure()
-p.plot(t, [Iperiod_impulse(tmeaning) for tmeaning in t], label = 'Iapp')
-p.plot(t, v, label = 'v')
-p.plot(t, 1e2*FN,label = 'FN (x100)')
-# p.plot(t, FN,label = 'FN') # FIXME Тестовая строчка, удалить
-p.plot(t, CN*1e1, label = 'CN (x10)')
-p.xlabel('$t, \: \mathrm{мс}$')
-p.legend()
-p.title('Поведение потенциала на нейроне $v$ и мускульной силы $FN$ (x1000) \n при импульсном внешнем токе $I_{app}(t)$ \n амплитудой %.2f $\mathrm{мкА/см^2}$ (показана $10\mathrm{x}$) и длительностями импульса от %.1f до %.1f $\mathrm{мс}$' % (5, 1, 5))
-p.show(block = True) 
+# # Самый главный график
+# fig = p.figure()
+# p.plot(t, [Iimpulse(tmeaning)*10 for tmeaning in t], label = 'Iapp') # масштаб x10 
+# p.plot(t, v*1e1, label = 'v')
+# p.plot(t, FN,label = 'FN')
+# # p.plot(t, FN,label = 'FN') # FIXME Тестовая строчка, удалить
+# p.plot(t, CN, label = 'CN')
+# p.xlabel('$t, \: \mathrm{мс}$')
+# p.legend()
+# p.title('Поведение потенциала на нейроне $v$ и мускульной силы $FN$ (x1000) \n при импульсном внешнем токе $I_{app}(t)$ \n амплитудой %.2f $\mathrm{мкА/см^2}$ (показана $10\mathrm{x}$) и длительностями импульса от %.1f до %.1f $\mathrm{мс}$' % (5, 1, 5))
+# p.show(block = True) 
 
-fig_testMuscle = p.figure()
-p.plot(t * 10, CN, label = 'CN')
-p.plot(t, v, label = 'v')
-p.xlabel('$t, \: \mathrm{с}$')
-p.show(block = True)
+# # График CN
+# fig = p.figure()
+# p.plot(t, [Iimpulse(tmeaning) for tmeaning in t], label = 'Iapp')
+# p.plot(t, CN, label = 'CN')
+# p.xlabel('$t, \: \mathrm{мс}$')
+# p.legend()
+# p.title('CN при импульсном внешнем токе $I_{app}(t)$ \n амплитудой %.2f $\mathrm{мкА/см^2}$ (показана $10\mathrm{x}$) и длительностями импульса от %.1f до %.1f $\mathrm{мс}$' % (5, 1, 5))
+# p.show(block = True)

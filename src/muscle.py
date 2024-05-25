@@ -3,11 +3,11 @@ from numpy import *
 class Muscle: 
     # Simplified Adapted Model (see Wilson2013 Eqs. 5–7)
 
-    tauc = 0.1 # s 
-    tau1 = 0.1 # s 
-    tau2 = 0 # s 
+    tauc = 20 # ms 
+    tau1 = 0.1 # ms 
+    tau2 = 50 # ms 
     k =  5 # FIXME units! 
-    A = 10 # FIXME units! 
+    A = 10 # N / ms 
     m = 2 # unitless 
 
     def __init__(self, CN0, F0, **kwargs): # FIXME: В каком формате передавать u? Как название ф-ции?
@@ -38,7 +38,7 @@ class Muscle:
         upars = self.upars
 
         if callable(u):
-            return - CN / tauc + u(**upars) 
+            return - CN / tauc + u(**upars) # Это должно быть u - u_rest 
         else: 
             return - CN / tauc + u # FIXME Ерунда с константой!!
         # FIXME: вообще, по-хорошему, должно быть u(*args) или что-то типа того
@@ -83,11 +83,11 @@ class Muscle:
 
 def delegate_Muscle(obj, vars, t, **kwargs): # Нужно ли сюда именно впихивать t? 
     obj.CN = vars[0] 
+    # print(obj.CN) # Убрать потом
     obj.F = vars[1] 
     obj.u = kwargs.pop('input') # Леплю говно
     if  obj.upars.get('t') != None: 
         obj.upars['t'] = t # Химичим с t 
         # FIXME Что-то там было про переписать upars[t]
-    print('t [s] at muscle  = ', t)
     return obj.model()
     

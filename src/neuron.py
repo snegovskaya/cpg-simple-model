@@ -4,7 +4,8 @@ from scipy import integrate
 
 class Neuron: 
     """
-    # Standart Hodgkin-Huxley model with the parameters got from https://neuronaldynamics.epfl.ch/ 
+    # Standart Hodgkin-Huxley model with the parameters got from https://neuronaldynamics.epfl.ch/ (NeuronalDynamics) book 
+     and original HodgkinHuxley1952 article 
 
     Attributes: 
         gNa (float): [mS / cm^2] — Na+ channel conductance 
@@ -183,6 +184,5 @@ def delegate_Neuron(obj, vars, t):
     obj.h = vars[3] 
     if obj.IappPars.get('t') != None: 
         obj.IappPars['t'] = t 
-        print('t at neuron = ', obj.IappPars['t'])
     return obj.model()
 
