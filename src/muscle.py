@@ -40,6 +40,7 @@ class Muscle:
         if callable(u):
             return - CN / tauc + u(**upars) # Это должно быть u - u_rest 
         else: 
+            print('eq_CN = ', - CN / tauc + u) # Убрать потом
             return - CN / tauc + u # FIXME Ерунда с константой!!
         # FIXME: вообще, по-хорошему, должно быть u(*args) или что-то типа того
 

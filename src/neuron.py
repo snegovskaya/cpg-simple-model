@@ -65,7 +65,8 @@ class Neuron:
         IappFunc = self.IappFunc 
         IappPars = self.IappPars
     
-        if callable(IappFunc):
+        if callable(IappFunc): 
+            print ('Iapp = ', IappFunc(**IappPars)) # Убрать потом 
             return (-(gNa * m**3*h*(v - ENa) + gK* n**4*(v - EK) + gL*(v - EL)) + IappFunc(**IappPars)) * 1/C
         else:
             return (-(gNa * m**3*h*(v - ENa) + gK* n**4*(v - EK) + gL*(v - EL)) + IappFunc) * 1/C 
@@ -175,10 +176,12 @@ class Neuron:
         eq_2 = self.eq_m() 
         eq_3 = self.eq_n() 
         eq_4 = self.eq_h() 
+        print('dv/dt = ', eq_1) # Убрать потом
         return array([eq_1, eq_2, eq_3, eq_4])
 
 def delegate_Neuron(obj, vars, t): 
     obj.v = vars[0] 
+    print('v = ', obj.v) # Убрать потом 
     obj.m = vars[1] 
     obj.n = vars[2] 
     obj.h = vars[3] 
