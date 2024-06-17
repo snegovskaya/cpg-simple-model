@@ -4,9 +4,9 @@ class Muscle:
     # Simplified Adapted Model (see Wilson2013 Eqs. 5–7)
 
     tauc = 20 # ms 
-    tau1 = 0.1 # ms 
+    tau1 = 0.5 # ms # FIXME Похимичила!
     tau2 = 50 # ms 
-    k =  5 # FIXME units! 
+    k =  100 # FIXME units! 
     A = 10 # N / ms 
     m = 2 # unitless 
 

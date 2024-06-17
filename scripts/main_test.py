@@ -5,7 +5,7 @@ from numpy import *
 from matplotlib import pyplot as p
 from scipy import integrate
 
-t = linspace(0, 100, 100) 
+t = linspace(0, 500, 1000) 
 
 v0 = -63.0540942 
 m0 = 0.06 
@@ -26,7 +26,7 @@ def Iimpulse(t: float, impulseAmpl = 5, impulseLength = 5, tStart = 1):
 
 
 
-def Iperiod_impulse(t: float, impulseAmpl = 5, impulseLength = 5, period = 10, tStart = 1, tFinish = 50): 
+def Iperiod_impulse(t: float, impulseAmpl = 5, impulseLength = 5, period = 20, tStart = 1, tFinish = 50): 
     if t > tFinish: 
         I = 0
     elif (t - tStart) % period <= impulseLength:
@@ -35,7 +35,7 @@ def Iperiod_impulse(t: float, impulseAmpl = 5, impulseLength = 5, period = 10, t
         I = 0
     return I 
 
-input = Iimpulse 
+input = Iperiod_impulse 
 
 test_neuron = Neuron(v0, m0, n0, h0, input=input, t=t[0])
 
@@ -130,7 +130,7 @@ v,m,n,h = neuron_vars.T
 
 # Самый главный график
 fig = p.figure()
-p.plot(t, [Iimpulse(tmeaning)*10 for tmeaning in t], label = 'Iapp') # масштаб x10 
+p.plot(t, [input(tmeaning)*10 for tmeaning in t], label = 'Iapp') # масштаб x10 
 p.plot(t, v, label = 'v')
 p.plot(t, FN*1e2,label = 'FN')
 # p.plot(t, FN,label = 'FN') # FIXME Тестовая строчка, удалить

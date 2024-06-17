@@ -11,6 +11,16 @@ from src.muscle import *
     В массив системы дописать соответствующее кол-во модели 
     В массив vars дописать соответствующее количество переменных
 """
+connectivity_matrix = zeros((2, 2))
+print(connectivity_matrix)
+
+# Функция для добавления матрицы: 
+
+def refill_matrix(element, matrix = connectivity_matrix): 
+    # # указатель на последний ряд матрицы должен стоять там, где его оставили
+    # matrix[last, element.input] = 1; 
+
+    return
 
 def delegate_Muscle(obj, vars, t, **kwargs): # Нужно ли сюда именно впихивать t? 
     obj.CN = vars[0] 
@@ -46,4 +56,4 @@ integrate.odeint(circuit_ODE, vars, t)
 ?
 
 Если да, то тогда надо сразу забивать под неё матрицу
-'''       
+'''
