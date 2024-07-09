@@ -3,11 +3,11 @@ from numpy import *
 class Muscle: 
     # Simplified Adapted Model (see Wilson2013 Eqs. 5–7)
 
-    tauc = 20 # ms 
-    tau1 = 0.5 # ms # FIXME Похимичила!
-    tau2 = 50 # ms 
-    k =  100 # FIXME units! 
-    A = 10 # N / ms 
+    tauc = 0.02 * 1e3 #  s --> ms # FIXME Нахимичила с единицами измерения!!
+    tau1 = 0.05 * 1e3 # s --> ms # FIXME -//-
+    # tau2 = 50 # ms # Он тут не фигурирует
+    k =  0.5 # FIXME -//- 
+    A = 2.5 # хз --> N * ms 
     m = 2 # unitless 
 
     def __init__(self, CN0, F0, **kwargs): # FIXME: В каком формате передавать u? Как название ф-ции?
