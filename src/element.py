@@ -1,5 +1,5 @@
 from numpy import * 
-from matrix import * 
+from src.matrix import * 
 
 class Element: 
 
@@ -15,21 +15,16 @@ class Element:
         if cls.matrix == None: 
             print("Матрица связности для класса Element ещё не создана") 
         # создать matrix
-        matrix = kwargs['matrix']
-        matrix.refill(1)
+        cls.matrix = kwargs['matrix']
+        cls.matrix.refill(kwargs['input'])
         return super().__new__(cls)
     
     # Это вызовется после создания объекта класса:
     def __init__(self, **kwargs):  
-        print("вызов __init__ для " + str(self))
+        print("вызов __init__ для " + str(self)) 
+        self.input = kwargs['input']
     
     # А это хз когда вызывается, но это должен быть сплав первого и второго
     def __call__(self): 
         print("вызов __call__ для " + str(self))
     
-
-matrix = Matrix()
-test_element1 = Element(matrix = matrix)
-print(matrix.explicit)
-test_element2 = Element(matrix = matrix)
-print(matrix.explicit)
