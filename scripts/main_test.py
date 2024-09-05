@@ -2,18 +2,21 @@
 import numpy as np1
 from src.element import Element
 from src.net import Net
-import sys
-import pprint
 
-pprint.pprint(sys.path)
-pprint.pprint(locals())
+## Для чего нужны были штуки ниже, я не помню
+# import sys
+# import pprint
 
-matrix1 = Net(3)
-matrix2 = Net(0)
-test_element1 = Element(input = 0) 
-test_element2 = Element(matrix = matrix2, input = 1)
-test_element3 = Element(matrix = matrix1, input = 2) # А мог бы быть и None
+# pprint.pprint(sys.path)
+# pprint.pprint(locals())
+
+
+net1 = Net(3)
+net2 = Net(0)
+element1 = Element() 
+element2 = Element(net = net2, input = element1, name = "element2")
+element3 = Element(net = net1, input = (element1, element2)) # А мог бы быть и None
 
 test_array = np1.zeros((2,2)) # FIXME Удалить потом
 
-print(test_element3.__net)
+print(element3.net)
