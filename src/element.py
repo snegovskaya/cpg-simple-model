@@ -1,5 +1,5 @@
 import numpy as np
-from .net import Net
+from src.net import Net
 
 class Element: 
     __name = None # уникальное имя элемента

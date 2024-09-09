@@ -1,6 +1,7 @@
-from numpy import * 
+from numpy import array 
+from element import Element
 
-class Muscle: 
+class Muscle(Element): 
     # Simplified Adapted Model (see Wilson2013 Eqs. 5–7)
 
     tauc = 0.02 * 1e3 #  s --> ms # FIXME Нахимичила с единицами измерения!!

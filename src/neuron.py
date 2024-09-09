@@ -1,8 +1,9 @@
-from numpy import *
+from numpy import exp, array
+from element import Element
 from matplotlib import pyplot as p
 from scipy import integrate
 
-class Neuron: 
+class Neuron(Element): 
     """
     # Standart Hodgkin-Huxley model with the parameters got from https://neuronaldynamics.epfl.ch/ (NeuronalDynamics) book 
      and original HodgkinHuxley1952 article 
@@ -188,4 +189,3 @@ def delegate_Neuron(obj, vars, t):
     if obj.IappPars.get('t') != None: 
         obj.IappPars['t'] = t 
     return obj.model()
-

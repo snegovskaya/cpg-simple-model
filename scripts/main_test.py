@@ -1,9 +1,14 @@
 # from numpy import * 
-import numpy as np1
+import sys
+sys.path.append("/Users/dascha/Job/cpg-simple-model/src")
+import numpy as np1 
+from src.net import Net 
 from src.element import Element
-from src.net import Net
+from src.neuron import Neuron
 
-## Для чего нужны были штуки ниже, я не помню
+## Приблуды для отображения переменных из пространства имён и пути 
+# (см. занятие по модулям на selfedu) 
+
 # import sys
 # import pprint
 
@@ -13,7 +18,7 @@ from src.net import Net
 
 net1 = Net(3)
 net2 = Net(0)
-element1 = Element() 
+element1 = Neuron() 
 element2 = Element(net = net2, input = element1, name = "element2")
 element3 = Element(net = net1, input = (element1, element2)) # А мог бы быть и None
 
