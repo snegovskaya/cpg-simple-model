@@ -15,9 +15,9 @@ class Net(metaclass = MetaSingleton):
     __dim = 0 # размерность = кол-во эл-тов системы 
     __current_index = None # указатель текущего эл-та FIXME Возможно, стоит сделать его -1
     # __instance = None # атрибут, показывающий, что экземпляр матрицы уже существует (singleton) 
-    __initialized = False # индикатор того, что объект класса инициализирован FIXME Ето костыль, призванный помочь жопе
-    __matrix = list(list()) # явный вид матрицы (2D-массив) # FIXME Возможно, надо переделать
-    
+    __initialized = False # индикатор того, что объект класса инициализирован FIXME Ето костыль, призванный помочь жопе 
+    __elements_list = list() # список со ссылками на элементы сети
+    __matrix = list(list()) # явный вид матрицы (2D-массив) # FIXME Возможно, надо переделать 
     
     ## Геттеры и сеттеры: 
 
@@ -38,6 +38,13 @@ class Net(metaclass = MetaSingleton):
     def current_index(self, current_index): 
         self.__current_index = current_index 
 
+    @property 
+    def elements_list(self): 
+        return self.__elements_list 
+    
+    @elements_list.setter 
+    def elements_list(self, elements_list): 
+        self.__elements_list = elements_list
     
     @property
     def matrix(self): 
@@ -80,6 +87,7 @@ class Net(metaclass = MetaSingleton):
 ## Решение для той мудроты с метаклассами: 
     def __init__(self, *args): 
         self.__dim = args[0] 
+        self.__elements_list = [None] * self.__dim # FIXME
         self.__matrix = np.zeros((self.__dim, self.__dim))
         self.__current_index = None # FIXME: вангую какую-нибудь херотень в граничных случаях
         print(self.__matrix) # FIXME: убрать потом 
@@ -110,14 +118,17 @@ class Net(metaclass = MetaSingleton):
         return self.__current_index
 
     ## Добавление нового элемента 
-    # FIXME: Тут щас творится полная жопа!
-    def add_element(self, element, **kwargs): # Добавление нового элемента 
+    # FIXME: Тут щас творится полная жопа! 
+
+    def __add_element_in_list(self, element): 
+        self.elements_list[self.current_index] = element # Тут тоже заменяю приватный атрибут на его геттер
+        return self.elements_list 
+    
+    def __add_element_in_matrix(self, element, **kwargs): # Добавление нового элемента 
         try:
             input = kwargs['input']
         except KeyError: 
-            print("На input ничего не поступало")
-        
-        self.__next__() 
+            print("На input ничего не поступало") 
 
         def get_input_indices(input): 
             try:
@@ -136,17 +147,22 @@ class Net(metaclass = MetaSingleton):
         try: 
             for input_index in input_indices: # FIXME: нужна проверка, что input_indices — это tuple!
                 # или сделать программу с вариативным поведением для одного или для нескольких input'ов
-                self.__matrix[self.__current_index][input_index] = 1 
+                self.matrix[self.current_index][input_index] = 1 # Приватный параметр на геттер
         except TypeError: 
             if input_indices in (0, int):
                 print("input сейчас — это одна чиселка")
                 input_index = input_indices
-                self.__matrix[self.__current_index][input_index] = 1
+                self.matrix[self.current_index][input_index] = 1
             else: 
                 pass
-        return self.__matrix
+        return self.matrix 
     
-    # Функции ниже скорее относятся к модулю net:
+    def add_element(self, element, **kwargs): 
+        self.__next__()
+        self.__add_element_in_list(element)
+        self.__add_element_in_matrix(element, **kwargs)
+        # Нужен ли здесь return?
+
 
 
     

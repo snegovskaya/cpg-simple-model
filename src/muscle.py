@@ -1,5 +1,5 @@
 from numpy import array 
-from element import Element
+from src.element import Element
 
 class Muscle(Element): 
     # Simplified Adapted Model (see Wilson2013 Eqs. 5–7)
@@ -19,7 +19,9 @@ class Muscle(Element):
             **kwargs (dict): 
                 kwargs.input (float OR callable): Input voltage meaning OR function 
                 kwargs.pop('input'): Arbitrary args to pass the 'input' function 
-        """
+        """ 
+
+        super().__init__(self, **kwargs) # Вызов __init__'а из Element
 
         self.test = 'I\'m class Muscle test' 
 

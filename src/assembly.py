@@ -1,9 +1,30 @@
+from numpy import array, zeros
 from src.neuron import *
 from src.muscle import * 
 
 # В самом начале нужно ввести количество эл-тов и огранизовать для них матрицу 
 
 # Возможно, сеть лучше сразу оформлять как класс
+
+## ------------- Наброски функционала ------------- 
+N_eq = 0 
+variables_array = zeros(1, N_eq)
+ode_array = zeros(1, N_eq)  # FIXME: Переименовать, возможно
+
+def ode_system(self): 
+    for element in net: 
+        ode_array.append(element.model) # FIXME: тут имеет смысл ставить либо везде ode_system, либо model
+    return ode_array 
+
+# Второй вариант: 
+def ode_system_refill(self, element): 
+    ode_array.append(element.ode_array)
+    return ode_array 
+
+def integrate_ode_system(self): 
+    ode_system = array(ode_system)
+    return ode_system
+##-------------------------------------------------
 
 """Если был вызван init, то
     Узнать, что это за звено; 

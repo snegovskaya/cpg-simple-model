@@ -35,7 +35,7 @@ class Element:
     
     @index.setter
     def index(self, index): 
-        self.__net = index 
+        self.__index = index 
 
     @property
     def input(self): 
@@ -43,16 +43,20 @@ class Element:
     
     @input.setter
     def input(self, input):
-        self.__input = input
+        self.__input = input 
+    
+    @property
+    def output(self): 
+        return self.__output  # без сеттера. Ещё вопрос, нужно ли оно.
 
     # Это вызовется перед созданием объекта класса:
     def __new__(cls, *args, **kwargs): 
         print("Вызов __new__ для " + str(cls)) 
         # Тут нужно такое: если в глобальном пространстве имён существует объект класса Net, то при каждом вызове new ссылку на него передавать по умолчанию 
-        if not isinstance(cls.__net, Net):
+        if not isinstance(cls.net, Net): # FIXME: В kwargs'ах-то net был!
             print("Ссылка на сеть для данного объекта класса Element отсутствует")
             # И теперь осталось по-нормальному создать сеть
-            cls.__net = Net(1) # FIXME: Тут создаётся сеть размерности 1 (но это если до того вообще никакой сети не было) Вопрос: как её потом расширять при необходимости?
+            cls.net = Net(1) # FIXME: Тут создаётся сеть размерности 1 (но это если до того вообще никакой сети не было) Вопрос: как её потом расширять при необходимости?
         return super().__new__(cls)
     
     # Это вызовется после создания объекта класса:
@@ -63,11 +67,40 @@ class Element:
         except KeyError: 
             print("текущий элемент безымянный")
         try: 
-            self.__input = kwargs['input'] # Просто передать кортеж 
+            input = kwargs['input'] # FIXME: Здесь рано загонять значение в self.__input 
         except KeyError: 
             print("Для этого элемента нет input'a") 
-        self.__net.add_element(self, input = self.__input) # FIXME% Тут будут исключения! 
-        self.__index = self.__net.current_index 
+            input = None 
+        self.net.add_element(self, input = input)# Из-за чехарды с наследованием заменила self.__net на self.net 
+        self.index = self.net.current_index # То же самое (см. выше)
+        self.input = self.__input_proceeding(input) # FIXME: Обработку input'а на уровне диффуров вывести сюда
+
+    ## Я хз, лучше ли писать функцию по обработке input до или после __init__'а, 
+    ## Но в любом случае, вот фукция по обработке __input__'а: 
+        
+    def __input_proceeding(self, input): 
+
+        def single_input_proceeding(input): # Функция обработки сигнала из одного источника
+            if isinstance(input, (Element)): 
+                if input.output is None: 
+                    return 0 
+                else: 
+                    return input.output 
+            else: 
+                if input is None: 
+                    return 0
+                return input # FIXME: Дописать обработку всякой хрени, если input не является float'ом или функцией  
+        
+        def complex_input_proceeding(input): # FIXME 
+            input_proceeded = list((0,)* len(input)) 
+            for source in input:
+                input_proceeded[input.index(source)] = single_input_proceeding(source)
+            return sum(input_proceeded) # Achtung! Выполняю втупую суммирование входных сигналов
+        
+        if not isinstance (input, tuple): 
+            return single_input_proceeding(input) 
+        else: 
+            return complex_input_proceeding(input)
 
     def __str__(self): 
         if self.__name is None: 

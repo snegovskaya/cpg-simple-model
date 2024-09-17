@@ -1,5 +1,5 @@
 from numpy import exp, array
-from element import Element
+from src.element import Element
 from matplotlib import pyplot as p
 from scipy import integrate
 
@@ -24,9 +24,23 @@ class Neuron(Element):
     EK = -77 
     EL = -65 
     C = 1 
+    
+    ## И чтоб я помнила, откуда взялись эти начальные значения...
+    v0 = -63.0540942 
+    m0 = 0.06 
+    n0 = 0.00 
+    h0 = 0.54 
 
+    ## Геттеры и сеттеры: 
+    @property
+    def output(self): 
+        return self.__output 
+    
+    @output.setter
+    def output(self, output): 
+        self.__output = output 
 
-    def __init__(self, v0, m0, n0, h0, **kwargs): 
+    def __init__(self, v0 = -63.0540942, m0 = 0.06, n0 = 0.00, h0 = 0.54, **kwargs): 
         """ 
         Args: 
             v0 (float): [mv] — initial v meaning 
@@ -36,13 +50,18 @@ class Neuron(Element):
             **kwargs: keyword arguments for a neuron input  
                 'input' (callable / float): obligatory v fuction or meaning input
         """
+
+        super().__init__(**kwargs) # Вызов __init__'а из Element
+
         self.v = v0 
         self.m = m0 
         self.n = n0 
         self.h = h0 
 
-        self.IappFunc = kwargs.pop('input')
-        self.IappPars = kwargs
+        self.output = self.v # FIXME 
+
+        self.IappFunc = self.input # FIXME: Проблемы с инпутом 
+        self.IappPars = kwargs # FIXME: Добыть параметры для функции!
   
   
     def eq_v(self): 
@@ -64,7 +83,10 @@ class Neuron(Element):
         h = self.h 
 
         IappFunc = self.IappFunc 
-        IappPars = self.IappPars
+        IappPars = self.IappPars 
+
+        ## Обработка input'a с element'а: 
+
     
         if callable(IappFunc): 
             print ('Iapp = ', IappFunc(**IappPars)) # Убрать потом 

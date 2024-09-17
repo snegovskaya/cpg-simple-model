@@ -16,12 +16,10 @@ from src.neuron import Neuron
 # pprint.pprint(locals())
 
 
-net1 = Net(3)
-net2 = Net(0)
-element1 = Neuron() 
-element2 = Element(net = net2, input = element1, name = "element2")
+net = Net(3)
+net1 = Net(0) 
+element1 = Element() 
+element2 = Neuron(net = net, input = element1, name = "element2")
 element3 = Element(net = net1, input = (element1, element2)) # А мог бы быть и None
 
-test_array = np1.zeros((2,2)) # FIXME Удалить потом
-
-print(element3.net)
+print(element3.net.elements_list)
