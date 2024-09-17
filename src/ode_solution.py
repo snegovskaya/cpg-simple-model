@@ -5,15 +5,17 @@ from src.muscle import Muscle
 
 
 ## ------------- Наброски функционала ------------- 
-net = Net()
 
-N_eq = sum(element.eq_num for element in net.elements_list) 
-variables_array = zeros(1, N_eq)
-ode_array = zeros(1, N_eq)  # FIXME: Переименовать, возможно
+# N_eq = sum(element.eq_num for element in net.elements_list) 
+# variables_array = zeros(1, N_eq)
+# ode_array = zeros(1, N_eq)  # FIXME: Переименовать, возможно
 
 def ode_system(net): 
+    N_eq = sum(element.eq_num for element in net.elements_list) # FIXME: Здесь эти строчки пускать или где?
+    variables_array = []
+    ode_array = [] # FIXME: Так массив или список? И аппендить или заменять?
     for element in net.elements_list: 
-        ode_array.append(element.model) # FIXME: тут имеет смысл ставить либо везде ode_system, либо model
+        ode_array.append(element.model()) # FIXME: тут имеет смысл ставить либо везде ode_system, либо model
     return ode_array 
 ##-------------------------------------------------
 

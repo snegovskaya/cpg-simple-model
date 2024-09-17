@@ -60,7 +60,7 @@ class Element:
         return super().__new__(cls)
     
     # Это вызовется после создания объекта класса:
-    def __init__(self, **kwargs):  
+    def __init__(self, *args, **kwargs):  # FIXME: Не знаю, насколько тут нужны *args
         print("вызов __init__ для " + f"{self}") 
         try: 
             self.name = kwargs['name'] 
@@ -93,7 +93,7 @@ class Element:
                     except AttributeError: 
                         print("Параметр t не был передан")
                     try:
-                        print(self.pars) 
+                        print(self.pars) # FIXME: Найти эти параметры!
                     except AttributeError: 
                         print("Доп. параметров для функции input не существует")
                 elif input is None: 

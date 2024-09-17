@@ -11,7 +11,16 @@ class Muscle(Element):
     A = 2.5 # хз --> N * ms 
     m = 2 # unitless 
 
-    def __init__(self, CN0, F0, **kwargs): # FIXME: В каком формате передавать u? Как название ф-ции?
+    ## Геттеры и сеттеры: 
+    @property 
+    def eq_num(self): 
+        return self.__eq_num 
+    
+    @eq_num.setter 
+    def eq_num(self, eq_num): 
+        self.__eq_num = eq_num
+
+    def __init__(self, CN0 = 0, F0 = 0, **kwargs): # FIXME: В каком формате передавать u? Как название ф-ции?
         """ 
         Args: 
             CN0 (float): Initial CN(t) meaning 
@@ -21,13 +30,13 @@ class Muscle(Element):
                 kwargs.pop('input'): Arbitrary args to pass the 'input' function 
         """ 
 
-        super().__init__(self, **kwargs) # Вызов __init__'а из Element
+        super().__init__(self, **kwargs) # Вызов __init__'а из Element 
 
-        self.test = 'I\'m class Muscle test' 
+        self.eq_num = 2 
 
         self.CN = CN0 
         self.F = F0 
-        self.u = kwargs.pop('input')
+        self.u = self.input
         self.upars = kwargs # 1. FIXME Но это не точно; 2. Зависимость от t сюда вроде как писать не нужно 
 
     def eq_CN(self): 

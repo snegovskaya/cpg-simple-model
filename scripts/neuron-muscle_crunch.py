@@ -17,7 +17,7 @@ CN0 = 0
 F0 = 0
 vars0_muscle = (CN0, F0) 
 
-def Iimpulse(t: float, impulseAmpl = 5, impulseLength = 5, tStart = 1):
+def I_impulse(t: float, impulseAmpl = 5, impulseLength = 5, tStart = 1):
     if t > tStart and t < tStart + impulseLength:
         I = impulseAmpl
     else:
@@ -26,7 +26,7 @@ def Iimpulse(t: float, impulseAmpl = 5, impulseLength = 5, tStart = 1):
 
 
 
-def Iperiod_impulse(t: float, impulseAmpl = 5, impulseLength = 5, period = 10, tStart = 1, tFinish = 50): 
+def I_period_impulse(t: float, impulseAmpl = 5, impulseLength = 5, period = 10, tStart = 1, tFinish = 50): 
     if t > tFinish: 
         I = 0
     elif (t - tStart) % period <= impulseLength:
@@ -35,7 +35,7 @@ def Iperiod_impulse(t: float, impulseAmpl = 5, impulseLength = 5, period = 10, t
         I = 0
     return I 
 
-input = Iperiod_impulse 
+input = I_period_impulse 
 
 test_neuron = Neuron(v0, m0, n0, h0, input=input, t=t[0])
 

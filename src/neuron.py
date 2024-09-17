@@ -40,6 +40,14 @@ class Neuron(Element):
     def output(self, output): 
         self.__output = output 
 
+    @property 
+    def eq_num(self): 
+        return self.__eq_num 
+    
+    @eq_num.setter 
+    def eq_num(self, eq_num): 
+        self.__eq_num = eq_num 
+
     def __init__(self, v0 = -63.0540942, m0 = 0.06, n0 = 0.00, h0 = 0.54, **kwargs): 
         """ 
         Args: 
@@ -53,6 +61,8 @@ class Neuron(Element):
 
         super().__init__(**kwargs) # Вызов __init__'а из Element 
 
+        self.eq_num = 4
+
         self.v = v0 
         self.m = m0 
         self.n = n0 
@@ -60,7 +70,7 @@ class Neuron(Element):
 
         self.output = self.v # FIXME 
 
-        self.IappFunc = input # FIXME: Проблемы с инпутом 
+        self.IappFunc = self.input # FIXME: Проблемы с инпутом 
         try: 
             self.IappPars = kwargs["pars"] # FIXME: Добыть параметры для функции! 
         except KeyError: 
