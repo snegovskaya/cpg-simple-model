@@ -1,47 +1,22 @@
-from numpy import array, zeros
-from src.neuron import *
-from src.muscle import * 
+from numpy import array, zeros 
+from src.net import Net
+from src.neuron import Neuron
+from src.muscle import Muscle 
 
-# В самом начале нужно ввести количество эл-тов и огранизовать для них матрицу 
-
-# Возможно, сеть лучше сразу оформлять как класс
 
 ## ------------- Наброски функционала ------------- 
-N_eq = 0 
+net = Net()
+
+N_eq = sum(element.eq_num for element in net.elements_list) 
 variables_array = zeros(1, N_eq)
 ode_array = zeros(1, N_eq)  # FIXME: Переименовать, возможно
 
-def ode_system(self): 
-    for element in net: 
+def ode_system(net): 
+    for element in net.elements_list: 
         ode_array.append(element.model) # FIXME: тут имеет смысл ставить либо везде ode_system, либо model
     return ode_array 
-
-# Второй вариант: 
-def ode_system_refill(self, element): 
-    ode_array.append(element.ode_array)
-    return ode_array 
-
-def integrate_ode_system(self): 
-    ode_system = array(ode_system)
-    return ode_system
 ##-------------------------------------------------
 
-"""Если был вызван init, то
-    Узнать, что это за звено; 
-    Найти в матрице последний безымянный элемент (или нулевую строчку) и прописать там ребро 
-    В массив системы дописать соответствующее кол-во модели 
-    В массив vars дописать соответствующее количество переменных
-"""
-connectivity_matrix = zeros((2, 2))
-print(connectivity_matrix)
-
-# Функция для добавления матрицы: 
-
-def refill_matrix(element, matrix = connectivity_matrix): 
-    # # указатель на последний ряд матрицы должен стоять там, где его оставили
-    # matrix[last, element.input] = 1; 
-
-    return
 
 def delegate_Muscle(obj, vars, t, **kwargs): # Нужно ли сюда именно впихивать t? 
     obj.CN = vars[0] 

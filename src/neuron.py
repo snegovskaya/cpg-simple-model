@@ -51,7 +51,7 @@ class Neuron(Element):
                 'input' (callable / float): obligatory v fuction or meaning input
         """
 
-        super().__init__(**kwargs) # Вызов __init__'а из Element
+        super().__init__(**kwargs) # Вызов __init__'а из Element 
 
         self.v = v0 
         self.m = m0 
@@ -60,9 +60,12 @@ class Neuron(Element):
 
         self.output = self.v # FIXME 
 
-        self.IappFunc = self.input # FIXME: Проблемы с инпутом 
-        self.IappPars = kwargs # FIXME: Добыть параметры для функции!
-  
+        self.IappFunc = input # FIXME: Проблемы с инпутом 
+        try: 
+            self.IappPars = kwargs["pars"] # FIXME: Добыть параметры для функции! 
+        except KeyError: 
+            print("Либо задайте параметры _строго_ с ключевым словом \"pars\", либо идите лесом!")
+
   
     def eq_v(self): 
         """

@@ -39,6 +39,7 @@ input = Iperiod_impulse
 
 test_neuron = Neuron(v0, m0, n0, h0, input=input, t=t[0])
 
+## Интегрирование чисто одного нейрона
 # test_result = integrate.odeint(lambda *args: delegate_neuron(test_neuron, *args,), vars0_neuron, t) 
 # v,m,n,h = test_result.T 
 
@@ -53,12 +54,13 @@ test_muscle = Muscle(CN0, F0, input = (test_neuron.v - v0)/80) # t=t[0]
 # Таким образом имеем, что test_muscle.CN = CN0, test_muscle.F = F0 
 
 # test_muscle = Muscle(CN0, F0, input = test_neuron.v - v0, t=t[0])
-   
+
+##  Интегрирование чисто одной мышцы
 # test_result = integrate.odeint(lambda *args: delegate_muscle(test_muscle, *args,), vars0_muscle, t)
 # CN, FN = test_result.T 
   
 
-# Полностью собранная схема
+## Полностью собранная схема
 def delegate_circuit(neuron, muscle, vars, t): 
     vars_neuron = vars[0:4]
     vars_muscle = vars[4:]
@@ -71,12 +73,12 @@ vars0 = vars0_neuron + vars0_muscle
 test_result = integrate.odeint(lambda *args: delegate_circuit(test_neuron, test_muscle, *args,), vars0, t)
 v,m,n,h, CN, FN = test_result.T 
 
-# Строю кривую нейрона отдельно
+## Строю кривую нейрона отдельно
 
 neuron_vars = integrate.odeint(lambda *args: delegate_Neuron(test_neuron, *args,), vars0_neuron, t) 
 v,m,n,h = neuron_vars.T 
 
-# # График v(t) для нейрона
+## График v(t) для нейрона
 # fig = p.figure()
 # p.plot(t, [Iimpulse(tmeaning) for tmeaning in t], label = 'Iapp')
 # p.plot(t, v, label = 'v')
@@ -86,7 +88,7 @@ v,m,n,h = neuron_vars.T
 # p.show(block = True)
 
 
-# # тест интегрирования одного уравнения CN при импульсном токе 
+## тест интегрирования одного уравнения CN при импульсном токе 
 # def delegate_CN(muscle, CN, uinput, t):
 #     muscle.CN = CN 
 #     print('CN= ',CN) # Убрать потом
@@ -112,7 +114,7 @@ v,m,n,h = neuron_vars.T
 # CN = test_result.T[0]  
 
 
-# # Попытка в сборку чисто с CN
+## Попытка в сборку чисто с CN
 
 # def delegate_circuit(neuron, muscle, vars, t):
 #     print('t = ', t) # Убрать потом 
@@ -125,13 +127,13 @@ v,m,n,h = neuron_vars.T
 # vars0 = vars0_neuron + (CN0,)
 
 
-
+## Интегрирование схемы целиком, но без вывода F
 # test_result = integrate.odeint(lambda *args: delegate_circuit(test_neuron, test_muscle, *args,), vars0, t)
 # v, m, n, h, CN = test_result.T
 
 
 
-# Самый главный график
+## Самый главный график
 fig = p.figure()
 p.plot(t, [input(tmeaning)*10 for tmeaning in t], label = 'Iapp (10x)') # масштаб x10 
 p.plot(t, v, label = 'v')
@@ -143,7 +145,7 @@ p.legend()
 p.title('Поведение потенциала на нейроне $v$ и мускульной силы $FN$ \n при импульсном внешнем токе $I_{app}(t)$ \n амплитудой %.0f $\mathrm{мкА/см^2}$ (показана $10\mathrm{x}$) и длительностью импульса %.0f $\mathrm{мс}$' % (5, 1)) # \n и скважностью импульсов %.0f 
 p.show(block = True) 
 
-# # График CN
+## График CN
 # fig = p.figure()
 # p.plot(t, [Iimpulse(tmeaning) for tmeaning in t], label = 'Iapp')
 # p.plot(t, v, label = 'v')

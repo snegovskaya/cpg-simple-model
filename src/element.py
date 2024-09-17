@@ -87,8 +87,17 @@ class Element:
                 else: 
                     return input.output 
             else: 
-                if input is None: 
-                    return 0
+                if callable(input): 
+                    try: 
+                        print(self.t) 
+                    except AttributeError: 
+                        print("Параметр t не был передан")
+                    try:
+                        print(self.pars) 
+                    except AttributeError: 
+                        print("Доп. параметров для функции input не существует")
+                elif input is None: 
+                    return 0 
                 return input # FIXME: Дописать обработку всякой хрени, если input не является float'ом или функцией  
         
         def complex_input_proceeding(input): # FIXME 

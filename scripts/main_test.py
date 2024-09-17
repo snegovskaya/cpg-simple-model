@@ -17,9 +17,8 @@ from src.neuron import Neuron
 
 
 net = Net(3)
-net1 = Net(0) 
-element1 = Element() 
-element2 = Neuron(net = net, input = element1, name = "element2")
-element3 = Element(net = net1, input = (element1, element2)) # А мог бы быть и None
+element1 = Neuron(net = net, name = "neuron1") 
+element2 = Neuron(input = element1, name = "element2")
+element3 = Element(net = net, input = (element1, element2)) # А мог бы быть и None
 
 print(element3.net.elements_list)
