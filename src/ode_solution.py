@@ -2,6 +2,7 @@ from numpy import array, zeros
 from src.net import Net
 from src.neuron import Neuron
 from src.muscle import Muscle 
+from scipy.integrate import odeint
 
 
 ## ------------- Наброски функционала ------------- 
@@ -18,6 +19,11 @@ def ode_system(net):
         ode_array.append(element.model()) # FIXME: тут имеет смысл ставить либо везде ode_system, либо model
     return ode_array 
 ##-------------------------------------------------
+
+def ode_solution(net, t): 
+    net.ode_system()
+    result = odeint(net.ode_system, net.initial_values, t) # Добавить поля в класс
+    return result
 
 
 def delegate_Muscle(obj, vars, t, **kwargs): # Нужно ли сюда именно впихивать t? 

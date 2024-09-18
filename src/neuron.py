@@ -69,15 +69,20 @@ class Neuron(Element):
         self.h = h0 
 
         self.output = self.v # FIXME 
+        
 
         self.IappFunc = self.input # FIXME: Проблемы с инпутом 
+        # Хорошо бы проверку на callable выполнить именно здесь: 
+
+        if callable(self.IappFunc): 
+            print("Тута править нада!") 
         try: 
             self.IappPars = kwargs["pars"] # FIXME: Добыть параметры для функции! 
         except KeyError: 
             print("Либо задайте параметры _строго_ с ключевым словом \"pars\", либо идите лесом!")
 
   
-    def eq_v(self): 
+    def eq_v(self, *args, **kwargs): 
         """
         Returns: 
            callable / float: right part of an ODE for v variable, t-dependent or indepentent

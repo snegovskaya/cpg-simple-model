@@ -86,8 +86,9 @@ class Element:
                     return 0 
                 else: 
                     return input.output 
-            else: 
+            else:  
                 if callable(input): 
+                    print("Achtung: input — это функция!") # В рамках класса element такой input обрабатывается через жопу
                     try: 
                         print(self.t) 
                     except AttributeError: 
@@ -100,16 +101,16 @@ class Element:
                     return 0 
                 return input # FIXME: Дописать обработку всякой хрени, если input не является float'ом или функцией  
         
-        def complex_input_proceeding(input): # FIXME 
+        def multiple_input_proceeding(input): # FIXME 
             input_proceeded = list((0,)* len(input)) 
             for source in input:
                 input_proceeded[input.index(source)] = single_input_proceeding(source)
             return sum(input_proceeded) # Achtung! Выполняю втупую суммирование входных сигналов
         
-        if not isinstance (input, tuple): 
-            return single_input_proceeding(input) 
+        if isinstance (input, tuple): 
+            return multiple_input_proceeding(input) 
         else: 
-            return complex_input_proceeding(input)
+            return single_input_proceeding(input)
 
     def __str__(self): 
         if self.__name is None: 
