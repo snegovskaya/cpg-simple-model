@@ -61,12 +61,14 @@ class Neuron(Element):
 
         super().__init__(**kwargs) # Вызов __init__'а из Element 
 
-        self.eq_num = 4
+        self.eq_num = 4 
 
         self.v = v0 
         self.m = m0 
         self.n = n0 
         self.h = h0 
+
+        self.vars = self.v, self.m, self.n, self.h # FIXME: Это взялось из ниоткуда — надо встроить его в общую канву
 
         self.output = self.v # FIXME 
         
@@ -80,6 +82,7 @@ class Neuron(Element):
             self.IappPars = kwargs["pars"] # FIXME: Добыть параметры для функции! 
         except KeyError: 
             print("Либо задайте параметры _строго_ с ключевым словом \"pars\", либо идите лесом!")
+            self.IappPars = {}
 
   
     def eq_v(self, *args, **kwargs): 
@@ -104,11 +107,13 @@ class Neuron(Element):
         IappPars = self.IappPars 
 
         ## Обработка input'a с element'а: 
-
+        
+        t = args[0] # Жоский костыль пошёл
     
-        if callable(IappFunc): 
-            print ('Iapp = ', IappFunc(**IappPars)) # Убрать потом 
-            return (-(gNa * m**3*h*(v - ENa) + gK* n**4*(v - EK) + gL*(v - EL)) + IappFunc(**IappPars)) * 1/C
+        if callable(IappFunc): # Жоский FIXME!
+            if __name__ ==  "src.neuron":
+                print ('Iapp = ', IappFunc(t, **IappPars)) # Убрать потом 
+            return (-(gNa * m**3*h*(v - ENa) + gK* n**4*(v - EK) + gL*(v - EL)) + IappFunc(t, **IappPars)) * 1/C
         else:
             return (-(gNa * m**3*h*(v - ENa) + gK* n**4*(v - EK) + gL*(v - EL)) + IappFunc) * 1/C 
 
@@ -208,12 +213,12 @@ class Neuron(Element):
         return self.__eq_x(h, ah, bh) 
 
 
-    def model(self): 
+    def model(self, args): # FIXME: аргументы...
         """
         Returns: 
            array: [self.eq_v, self.eq_m, self.eq_n, self.eq_h]
         """
-        eq_1 = self.eq_v() 
+        eq_1 = self.eq_v(args) 
         eq_2 = self.eq_m() 
         eq_3 = self.eq_n() 
         eq_4 = self.eq_h() 

@@ -36,7 +36,11 @@ class Muscle(Element):
 
         self.CN = CN0 
         self.F = F0 
-        self.u = self.input
+
+        self.vars = self.CN, self.F 
+
+        self.u = self.input - self.input
+        self.u0 = self.input # FIXME: ACHTUNG!!! Костыль!!!
         self.upars = kwargs # 1. FIXME Но это не точно; 2. Зависимость от t сюда вроде как писать не нужно 
 
     def eq_CN(self): 
@@ -46,7 +50,7 @@ class Muscle(Element):
         """
         CN = self.CN 
         tauc = self.tauc 
-        u = self.u 
+        u = self.u - self.u0
         upars = self.upars
 
         if callable(u):
@@ -81,7 +85,7 @@ class Muscle(Element):
         return - F / tau1 + A * x
 
 
-    def model(self): 
+    def model(self, *args): # FIXME
         """
         Collects ODEs in one system 
 

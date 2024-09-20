@@ -18,7 +18,9 @@ class Net(metaclass = MetaSingleton):
     __initialized = False # индикатор того, что объект класса инициализирован FIXME Ето костыль, призванный помочь жопе 
     __elements_list = list() # список со ссылками на элементы сети
     __matrix = list(list()) # явный вид матрицы (2D-массив) # FIXME Возможно, надо переделать 
-    
+    # FIXME: Вписать сюда vars и ode_system!
+
+
     ## Геттеры и сеттеры: 
 
     @property
@@ -161,7 +163,24 @@ class Net(metaclass = MetaSingleton):
         self.__next__()
         self.__add_element_in_list(element)
         self.__add_element_in_matrix(element, **kwargs)
-        # Нужен ли здесь return?
+        # Нужен ли здесь return? 
+
+    def generate_vars_list(self): 
+        self.vars = [] # FIXME 
+        for element in self.elements_list: 
+            self.vars += [*element.vars] 
+        return self.vars
+
+    def generate_ode_system(self): # FIXME: аргументы...
+        N_eq = sum(element.eq_num for element in self.elements_list) 
+        def ode_system(vars, t): 
+            self.vars = vars
+            result = [] # FIXME 
+            for element in self.elements_list: 
+                result += [*element.model(t)]
+            return result
+        self.ode_system = ode_system 
+        return self.ode_system
 
 
 
