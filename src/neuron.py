@@ -108,15 +108,17 @@ class Neuron(Element):
 
         ## Обработка input'a с element'а: 
         
-        t = args[0] # Жоский костыль пошёл
+        t = args[0] # Жоский костыль пошёл 
+        print("t = ", t) # Убрать потом 
     
         if callable(IappFunc): # Жоский FIXME!
             if __name__ ==  "src.neuron":
                 print ('Iapp = ', IappFunc(t, **IappPars)) # Убрать потом 
-            return (-(gNa * m**3*h*(v - ENa) + gK* n**4*(v - EK) + gL*(v - EL)) + IappFunc(t, **IappPars)) * 1/C
+            dv_dt = (-(gNa * m**3*h*(v - ENa) + gK* n**4*(v - EK) + gL*(v - EL)) + IappFunc(t, **IappPars)) * 1/C
         else:
-            return (-(gNa * m**3*h*(v - ENa) + gK* n**4*(v - EK) + gL*(v - EL)) + IappFunc) * 1/C 
-
+            dv_dt = (-(gNa * m**3*h*(v - ENa) + gK* n**4*(v - EK) + gL*(v - EL)) + IappFunc) * 1/C  
+        print("dv_dt = ", dv_dt)
+        return dv_dt
 
     def __eq_x(self, x, ax, bx): 
         """
@@ -124,7 +126,8 @@ class Neuron(Element):
             callable: function template of m, n, h for inner usage
         """
         # return Cx * exp(-(ax + bx) * t) + ax/(ax + bx) Это ж решение с v в качестве параметра! Мне-то нужно исходное уравнение!
-        return ax * (1 - x) - bx * x 
+        dx_dt = ax * (1 - x) - bx * x 
+        return dx_dt 
   
   
     def am(self): 
@@ -134,7 +137,8 @@ class Neuron(Element):
         """
         v = self.v 
         # return 0.1 * (v + 25) * 1/(exp((v + 25)/10) - 1) # По HodgkinHuxley1952
-        return 0.182 * (v + 35) * 1/(1 - exp(-(v + 35)/9)) 
+        am = 0.182 * (v + 35) * 1/(1 - exp(-(v + 35)/9)) 
+        return am
   
     def bm(self): 
         """
@@ -143,7 +147,8 @@ class Neuron(Element):
         """
         v = self.v 
         # return 4 * exp(v/18) # По HodgkinHuxley1952
-        return -0.124 * (v + 35) * 1/(1 - exp((v + 35)/9))
+        bm = -0.124 * (v + 35) * 1/(1 - exp((v + 35)/9)) 
+        return bm 
 
     def an(self): 
         """
@@ -152,7 +157,8 @@ class Neuron(Element):
         """
         v = self.v 
         # return 0.01 * (v + 10) * 1/(exp((v + 10)/10) - 1) # По HodgkinHuxley1952
-        return 0.02 * (v - 25) * 1/(1 - exp(-(v - 25)/9)) 
+        an = 0.02 * (v - 25) * 1/(1 - exp(-(v - 25)/9)) 
+        return an 
   
     def bn(self): 
         """
@@ -160,8 +166,9 @@ class Neuron(Element):
            float: $beta_n$ parameter for given v meaning
         """
         v = self.v 
-        # return 0.125 * exp(v/80) # По HodgkinHuxley1952
-        return -0.002 * (v - 25) * 1/(1 - exp(v - 25)/9) 
+        # return 0.125 * exp(v/80) # По HodgkinHuxley1952 
+        bn = -0.002 * (v - 25) * 1/(1 - exp(v - 25)/9) 
+        return bn 
 
     def ah(self): 
         """
@@ -169,8 +176,9 @@ class Neuron(Element):
            float: $alpha_h$ parameter for given v meaning
         """
         v = self.v
-        # return 0.07 * exp(v/20) # По HodgkinHuxley1952
-        return 0.25 * exp(-(v + 90)/12) 
+        # return 0.07 * exp(v/20) # По HodgkinHuxley1952 
+        ah =  0.25 * exp(-(v + 90)/12) 
+        return ah 
 
     def bh(self): 
         """
@@ -178,8 +186,9 @@ class Neuron(Element):
            float: $beta_h$ parameter for given v meaning
         """
         v = self.v
-        # return 1/(exp((v + 30)/10) + 1) # По HodgkinHuxley1952
-        return 0.25 * exp((v + 62)/6) / exp((v + 90)/12)
+        # return 1/(exp((v + 30)/10) + 1) # По HodgkinHuxley1952 
+        bh = 0.25 * exp((v + 62)/6) / exp((v + 90)/12) 
+        return bh 
   
 
     def eq_m(self): 
@@ -190,7 +199,9 @@ class Neuron(Element):
         m = self.m 
         am = self.am() 
         bm = self.bm() 
-        return self.__eq_x(m, am, bm) 
+        dm_dt = self.__eq_x(m, am, bm) 
+        print("dm_dt = ", dm_dt) 
+        return dm_dt 
   
     def eq_n(self): 
         """
@@ -200,7 +211,9 @@ class Neuron(Element):
         n = self.n 
         an = self.an() 
         bn = self.bn() 
-        return self.__eq_x(n, an, bn) 
+        dn_dt = self.__eq_x(n, an, bn) 
+        print("dn_dt = ", dn_dt) 
+        return dn_dt 
   
     def eq_h(self): 
         """
@@ -210,7 +223,9 @@ class Neuron(Element):
         h = self.h 
         ah = self.ah() 
         bh = self.bh() 
-        return self.__eq_x(h, ah, bh) 
+        dh_dt = self.__eq_x(h, ah, bh) 
+        print("dh_dt = ", dh_dt)
+        return dh_dt 
 
 
     def model(self, args): # FIXME: аргументы...
