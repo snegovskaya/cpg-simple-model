@@ -28,7 +28,15 @@ class Muscle(Element):
     @vars.setter 
     def vars(self, vars): 
         self.CN, self.F = vars
-        self.__vars = vars
+        self.__vars = vars 
+
+    @property # Это пока без геттера и сеттера
+    def u(self): 
+        return self.input 
+    
+    # @u.setter
+    # def u(self, u): 
+
 
     def __init__(self, CN0 = 0, F0 = 0, **kwargs): # FIXME: В каком формате передавать u? Как название ф-ции?
         """ 
@@ -46,7 +54,8 @@ class Muscle(Element):
         self.CN = CN0 
         self.F = F0 
         self.vars = self.CN, self.F 
-        self.u = self.input 
+        # self.u = self.input # Вернуть как было! 
+        # self.u = self.input
         self.upars = kwargs # 1. FIXME Но это не точно; 2. Зависимость от t сюда вроде как писать не нужно 
 
     def eq_CN(self): 

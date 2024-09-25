@@ -33,10 +33,11 @@ class Neuron(Element):
 
     ## Геттеры и сеттеры: 
     @property
-    def output(self): 
+    def output(self): # АЫАЫАЫ, FIXME!!! 
+        self.__output = self.v - self.v0
         return self.__output 
     
-    @output.setter
+    @output.setter # А нужно ли? 
     def output(self, output): 
         self.__output = output 
 
