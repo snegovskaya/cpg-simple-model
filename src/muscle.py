@@ -18,7 +18,17 @@ class Muscle(Element):
     
     @eq_num.setter 
     def eq_num(self, eq_num): 
-        self.__eq_num = eq_num
+        self.__eq_num = eq_num 
+
+    @property # FIXME
+    def vars(self): 
+        self.__vars = self.CN, self.F 
+        return self.__vars 
+
+    @vars.setter 
+    def vars(self, vars): 
+        self.CN, self.F = vars
+        self.__vars = vars
 
     def __init__(self, CN0 = 0, F0 = 0, **kwargs): # FIXME: В каком формате передавать u? Как название ф-ции?
         """ 
@@ -33,14 +43,10 @@ class Muscle(Element):
         super().__init__(self, **kwargs) # Вызов __init__'а из Element 
 
         self.eq_num = 2 
-
         self.CN = CN0 
         self.F = F0 
-
         self.vars = self.CN, self.F 
-
-        self.u = self.input - self.input
-        self.u0 = self.input # FIXME: ACHTUNG!!! Костыль!!!
+        self.u = self.input 
         self.upars = kwargs # 1. FIXME Но это не точно; 2. Зависимость от t сюда вроде как писать не нужно 
 
     def eq_CN(self): 
@@ -50,7 +56,8 @@ class Muscle(Element):
         """
         CN = self.CN 
         tauc = self.tauc 
-        u = self.u - self.u0
+        u = self.u
+        print("u = ", u)
         upars = self.upars
 
         if callable(u):

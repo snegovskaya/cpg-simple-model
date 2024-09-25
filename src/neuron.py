@@ -48,6 +48,16 @@ class Neuron(Element):
     def eq_num(self, eq_num): 
         self.__eq_num = eq_num 
 
+    @property # FIXME
+    def vars(self): 
+        self.__vars = self.v, self.m, self.n, self.h 
+        return self.__vars 
+
+    @vars.setter 
+    def vars(self, vars): 
+        self.v, self.m, self.n, self.h = vars
+        self.__vars = vars
+
     def __init__(self, v0 = -63.0540942, m0 = 0.06, n0 = 0.00, h0 = 0.54, **kwargs): 
         """ 
         Args: 
@@ -67,10 +77,15 @@ class Neuron(Element):
         self.m = m0 
         self.n = n0 
         self.h = h0 
+        self.vars = (v0, m0, n0, h0) # FIXME
 
-        self.vars = self.v, self.m, self.n, self.h # FIXME: Это взялось из ниоткуда — надо встроить его в общую канву
+        print("v = ", self.v) 
+        print("m = ", self.m)
+        print("n = ", self.n)
+        print("h = ", self.h)
+        print("vars = ", vars)# FIXME: Это взялось из ниоткуда — надо встроить его в общую канву
 
-        self.output = self.v # FIXME 
+        self.output = self.v - self.v0 # FIXME 
         
 
         self.IappFunc = self.input # FIXME: Проблемы с инпутом 
@@ -232,12 +247,12 @@ class Neuron(Element):
         """
         Returns: 
            array: [self.eq_v, self.eq_m, self.eq_n, self.eq_h]
-        """
+        """ 
         eq_1 = self.eq_v(args) 
         eq_2 = self.eq_m() 
         eq_3 = self.eq_n() 
         eq_4 = self.eq_h() 
-        print('dv/dt = ', eq_1) # Убрать потом
+        print('neuron output = ', self.output) # Убрать потом
         return array([eq_1, eq_2, eq_3, eq_4])
 
 def delegate_Neuron(obj, vars, t): 

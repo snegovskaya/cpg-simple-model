@@ -6,10 +6,11 @@ class Element:
     __net = None # ссылка на матрицу (сеть) 
     __index = None # порядковый номер в матрице (сети)
     __type = None # тип элемента (нейрон, мышца, рецептор) (пока без понятия, нужно или нет)
-    __eq_num = 0 # число уравнений в модели
+    __eq_num = 0 # число уравнений в модели 
+    __vars = None
     __input = None # входной сигнал $ FIXME Аchtung: что делать, если входных сигналов несколько (дендриты)? 
     # __input давать в виде кортежа со ссылками на «входные» элементы
-    __output = None # выходной сигнал
+    __output = None # выходной сигнал 
 
     ## Геттеры и сеттеры:
     
@@ -47,7 +48,15 @@ class Element:
     
     @property
     def output(self): 
-        return self.__output  # без сеттера. Ещё вопрос, нужно ли оно.
+        return self.__output  # без сеттера. Ещё вопрос, нужно ли оно. 
+    
+    @property # FIXME
+    def vars(self): 
+        print("Задай vars, сцуко!") 
+
+    @vars.setter 
+    def vars(self, vars): 
+        print("Нету у тебя vars, сцуко!")
 
     # Это вызовется перед созданием объекта класса:
     def __new__(cls, *args, **kwargs): 

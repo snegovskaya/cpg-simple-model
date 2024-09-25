@@ -12,8 +12,8 @@ from scipy.integrate import odeint
 # ode_array = zeros(1, N_eq)  # FIXME: Переименовать, возможно
 
 def ode_solution(net, t): 
-    net.generate_vars_list()
-    net.generate_ode_system()
+    net.vars = net.generate_vars_list() # FIXME: Костыли сраные!
+    net.ode_system = net.generate_ode_system()
     result = odeint(net.ode_system, net.vars, t) # Добавить поля в класс
     return result
 

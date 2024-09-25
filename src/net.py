@@ -165,11 +165,27 @@ class Net(metaclass = MetaSingleton):
         self.__add_element_in_matrix(element, **kwargs)
         # Нужен ли здесь return? 
 
-    def generate_vars_list(self): 
-        self.vars = [] # FIXME 
+    @property # FIXME 
+    def vars(self): 
+        self.__vars = [] # FIXME 
         for element in self.elements_list: 
-            self.vars += [*element.vars] 
-        return self.vars
+            self.__vars += [*element.vars] 
+        return self.__vars 
+    
+    @vars.setter 
+    def vars(self, vars): 
+        for element in self.elements_list: 
+            slice_size = len(element.vars) 
+            vars_to_load = vars[0:slice_size] 
+            element.vars = vars_to_load # FIXME 
+            vars = vars[slice_size:]
+    
+
+    def generate_vars_list(self): # FIXME: Дублирование с геттером! 
+        self.__vars = [] # FIXME 
+        for element in self.elements_list: 
+            self.__vars += [*element.vars] 
+        return self.__vars
 
     def generate_ode_system(self): # FIXME: аргументы...
         N_eq = sum(element.eq_num for element in self.elements_list) 
@@ -180,7 +196,24 @@ class Net(metaclass = MetaSingleton):
                 result += [*element.model(t)]
             return result
         self.ode_system = ode_system 
-        return self.ode_system
+        return self.ode_system 
+    
+    ## ------ Экспериментальный блок -------
+    
+    # def ode_system(self, vars, t): 
+    #     self.vars = vars 
+    #     for element in self.elements_list: 
+    #             result += [*element.model(t)]
+
+
+    def  ode_solution(self, t): 
+        from scipy.integrate import odeint
+        result = odeint(self.ode_system, self.vars, t) 
+        return result
+
+
+    
+    
 
 
 
