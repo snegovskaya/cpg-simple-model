@@ -72,30 +72,28 @@ class Element:
     def vars(self, vars): 
         print("Нету у тебя vars, сцуко!")
 
-    # Это вызовется перед созданием объекта класса:
+    ## Это вызовется перед созданием объекта класса:
     def __new__(cls, *args, **kwargs): 
-        print("Вызов __new__ для " + str(cls)) 
         # Тут нужно такое: если в глобальном пространстве имён существует объект класса Net, то при каждом вызове new ссылку на него передавать по умолчанию 
         if not isinstance(cls.net, Net): # FIXME: В kwargs'ах-то net был!
             print("Ссылка на сеть для данного объекта класса Element отсутствует")
-            # И теперь осталось по-нормальному создать сеть
+            # И теперь осталось по-нормальному создать сеть 
             cls.net = Net(1) # FIXME: Тут создаётся сеть размерности 1 (но это если до того вообще никакой сети не было) Вопрос: как её потом расширять при необходимости?
         return super().__new__(cls)
     
-    # Это вызовется после создания объекта класса:
+    ## Это вызовется после создания объекта класса:
     def __init__(self, *args, **kwargs):  # FIXME: Не знаю, насколько тут нужны *args
-        print("вызов __init__ для " + f"{self}") 
-        try: 
+        if 'name' in kwargs: 
             self.name = kwargs['name'] 
-        except KeyError: 
+        else: 
             print("текущий элемент безымянный")
-        try: 
+        if 'input' in kwargs: 
             input = kwargs['input'] # FIXME: Здесь рано загонять значение в self.__input 
-        except KeyError: 
+        else: # FIXME: Надо поднять какую-нибудь ошибку 
             print("Для этого элемента нет input'a") 
             input = None 
-        self.net.add_element(self, input = input)# FIXME Из-за чехарды с наследованием заменила self.__net на self.net 
-        self.index = self.net.current_index # То же самое (см. выше)
+        self.net.add_element(self, input = input) 
+        self.index = self.net.current_index 
         self.input_node = input # FIXME: Временная тестовая строчка
         self.__primary_input_proceed(input)
 

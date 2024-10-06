@@ -114,13 +114,13 @@ class Muscle(Element):
 
         return array([eq_1, eq_2])
 
-def delegate_Muscle(obj, vars, t, **kwargs): # Нужно ли сюда именно впихивать t? 
-    obj.CN = vars[0] 
-    # print(obj.CN) # Убрать потом
-    obj.F = vars[1] 
-    obj.u = kwargs.pop('input') # Леплю говно
-    if  obj.upars.get('t') != None: 
-        obj.upars['t'] = t # Химичим с t 
-        # FIXME Что-то там было про переписать upars[t]
-    return obj.model()
+# def delegate_Muscle(obj, vars, t, **kwargs): # Нужно ли сюда именно впихивать t? 
+#     obj.CN = vars[0] 
+#     # print(obj.CN) # Убрать потом
+#     obj.F = vars[1] 
+#     obj.u = kwargs.pop('input') # Леплю говно
+#     if  obj.upars.get('t') != None: 
+#         obj.upars['t'] = t # Химичим с t 
+#         # FIXME Что-то там было про переписать upars[t]
+#     return obj.model()
     

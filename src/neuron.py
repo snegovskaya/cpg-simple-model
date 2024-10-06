@@ -1,7 +1,5 @@
 from numpy import exp, array
-from src.element import Element
-from matplotlib import pyplot as p
-from scipy import integrate
+from src.element import Element # from element import Element 
 
 class Neuron(Element): 
     """
@@ -256,12 +254,12 @@ class Neuron(Element):
         print('neuron output = ', self.output) # Убрать потом
         return array([eq_1, eq_2, eq_3, eq_4])
 
-def delegate_Neuron(obj, vars, t): 
-    obj.v = vars[0] 
-    print('v = ', obj.v) # Убрать потом 
-    obj.m = vars[1] 
-    obj.n = vars[2] 
-    obj.h = vars[3] 
-    if obj.IappPars.get('t') != None: 
-        obj.IappPars['t'] = t 
-    return obj.model()
+# def delegate_Neuron(obj, vars, t): 
+#     obj.v = vars[0] 
+#     print('v = ', obj.v) # Убрать потом 
+#     obj.m = vars[1] 
+#     obj.n = vars[2] 
+#     obj.h = vars[3] 
+#     if obj.IappPars.get('t') != None: 
+#         obj.IappPars['t'] = t 
+#     return obj.model()
