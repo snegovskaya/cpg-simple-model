@@ -1,4 +1,5 @@
 import numpy as np 
+# from src.receptor import Receptor # FIXME: только для отладки!
 
 ## Метакласс для переопределения метода __call__ при вызове класса Net 
 class MetaSingleton(type): 
@@ -146,15 +147,22 @@ class Net(metaclass = MetaSingleton):
     def generate_vars_list(self): # FIXME: Дублирование с геттером! 
         self.__vars = [] # FIXME 
         for element in self.elements_list: 
-            self.__vars.extend(element.vars) 
+            try: 
+                self.__vars.extend(element.vars) # Обработка исключения, если напоролись на рецептор
+            except: 
+                continue
         return self.__vars
 
     def generate_ode_system(self): # FIXME: аргументы... 
+        from src.receptor import Receptor # FIXME: только для отладки!
         def ode_system(vars, t): 
             self.vars = vars
             result = [] # FIXME 
             for element in self.elements_list: 
-                result.extend(element.model(t))
+                if isinstance(element, Receptor): # FIXME: Отладочное условие!
+                    print("I_rec = ",element.output)
+                else: 
+                    result.extend(element.model(t))
             return result
         self.ode_system = ode_system 
         return self.ode_system 

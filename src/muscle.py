@@ -37,6 +37,16 @@ class Muscle(Element):
     # @u.setter
     # def u(self, u): 
 
+    @property 
+    def output(self): 
+        return self.F 
+    
+    @output.setter
+    def output(self, F):
+        self.__output = self.F 
+        return self.__output 
+    
+
 
     def __init__(self, CN0 = 0, F0 = 0, **kwargs): # FIXME: В каком формате передавать u? Как название ф-ции?
         """ 
