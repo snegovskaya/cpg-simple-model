@@ -54,7 +54,18 @@ class ODE_system(): # FIXME: Пока делаю его без наследов�
                 slice_size = len(element.vars) 
                 vars_to_load = vars[0:slice_size] 
                 element.vars = vars_to_load # FIXME 
-                vars = vars[slice_size:]
+                vars = vars[slice_size:] 
+
+    def right_part(self, vars, t): # FIXME: криво написано, с кривыми названиями 
+        self.vars = vars
+        right_part = [] # FIXME: Обнуляем, видимо 
+        for element in self.elements_list: 
+            if element.model == None:
+                print("I_rec = ",element.output)
+            else: 
+                right_part.extend(element.model(t))
+        # Ну тут вопрос, на самом деле: а что возвращать?
+        # return self.__right_part 
     
 
     def generate_vars_list(self): # FIXME: Дублирование с геттером! 
@@ -79,6 +90,8 @@ class ODE_system(): # FIXME: Пока делаю его без наследов�
             return result
         self.ode_system = ode_system 
         return self.ode_system 
+    
+    
 
     def solution(self, t): # FIXME: Всё перекурочено! 
         result = odeint(self.right_part, self.vars, t) 

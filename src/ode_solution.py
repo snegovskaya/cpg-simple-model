@@ -31,7 +31,19 @@ class ODE_system(Net): ## ACHTUNG!! Завела для системы дифф�
                 slice_size = len(element.vars) 
                 vars_to_load = vars[0:slice_size] 
                 element.vars = vars_to_load # FIXME 
-                vars = vars[slice_size:]
+                vars = vars[slice_size:] 
+
+    @property # FIXME: криво написано, с кривыми названиями 
+    def ode_system(self, vars, t): 
+        self.vars = vars
+        result = [] # FIXME 
+        for element in self.elements_list: 
+            if element.model == None:
+                print("I_rec = ",element.output)
+            else: 
+                result.extend(element.model(t))
+        self.__ode_system = result 
+        return self.__ode_system 
     
 
     def generate_vars_list(self): # FIXME: Дублирование с геттером! 
