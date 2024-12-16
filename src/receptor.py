@@ -29,9 +29,16 @@ class Receptor(Element):
     def __init__(self, **kwargs): 
         super().__init__(**kwargs) # Вызов __init__'а из Element 
         F = self.input 
-
+    
+    @ property 
     def I(self): 
-        return self.r() 
+        # return self.r() 
+        return 2 * self.F # Тестовое значение 
+    
+    @ property 
+    def output(self): 
+        self.__output = self.I 
+        return self.__output 
 
     def get_x(self): 
         self.x = self.F 

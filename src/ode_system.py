@@ -11,10 +11,28 @@ from scipy.integrate import odeint
 # variables_array = zeros(1, N_eq)
 # ode_array = zeros(1, N_eq)  # FIXME: Переименовать, возможно 
 
-class ODE_system(Net): ## ACHTUNG!! Завела для системы диффуров отдельный класс!!
+class ODE_system(): # FIXME: Пока делаю его без наследования от Net 
 
-    @property # FIXME 
+    test_var = "I'm ODE_system class"
+
+    def __init__(self): 
+        print("Инициализация класса ODE_system")
+        # super().__init__(self) # Вот здесь собака зарыта! 
+        self.net = Net(1) 
+        self.elements_list = self.net.elements_list
+        self.__vars = [] 
+        self.__right_part = [] 
+
+
+    @property # FIXME
     def vars(self): 
+        """ 
+        Геттер для приватной переменной __vars: 
+        - Проходится по всем элементам сети; 
+        - Добывает __vars из каждого элемента; 
+        - Сводит добытое в итоговый список для всей системы; 
+        - Возвращает этот список. 
+        """ 
         self.__vars = [] # FIXME Но нам же не надо опустошать массив каждый раз, да?..
         for element in self.elements_list: 
             if element.vars == None: 
@@ -23,11 +41,16 @@ class ODE_system(Net): ## ACHTUNG!! Завела для системы дифф�
                 self.__vars += [*element.vars] 
         return self.__vars 
     
-    @vars.setter # FIXME: прописать, что он делает, — а то я уже забыла 
+    @vars.setter  
     def vars(self, vars): 
-        from src.receptor import Receptor # FIXME: только для отладки!
+        """ 
+        Сеттер для приватной переменной (свойства) __vars: 
+        - Раскидывает переданные ему значения vars по всем элементам сети
+        """ 
         for element in self.elements_list: 
-            if not isinstance(element, Receptor):
+            if element.model == None: 
+                pass # FIXME: обработать исключение 
+            else: 
                 slice_size = len(element.vars) 
                 vars_to_load = vars[0:slice_size] 
                 element.vars = vars_to_load # FIXME 
@@ -56,15 +79,10 @@ class ODE_system(Net): ## ACHTUNG!! Завела для системы дифф�
             return result
         self.ode_system = ode_system 
         return self.ode_system 
-    
 
-
-def ode_solution(net, t): 
-    net.vars = net.generate_vars_list() # FIXME: Костыли сраные!
-    net.ode_system = net.generate_ode_system()
-    result = odeint(net.ode_system, net.vars, t) # Добавить поля в класс
-    return result
-
+    def solution(self, t): # FIXME: Всё перекурочено! 
+        result = odeint(self.right_part, self.vars, t) 
+        return result
 
 def delegate_Muscle(obj, vars, t, **kwargs): # Нужно ли сюда именно впихивать t? 
     obj.CN = vars[0] 
@@ -101,3 +119,8 @@ integrate.odeint(circuit_ODE, vars, t)
 
 Если да, то тогда надо сразу забивать под неё матрицу
 '''
+
+if __name__ == "__main__": 
+    test_net = Net(1)
+    test_ode_system = ODE_system() 
+    print("test_ode_system works!")

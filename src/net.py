@@ -18,8 +18,8 @@ class Net(metaclass = MetaSingleton):
 
 ## Решение для той мудроты с метаклассами: 
     def __init__(self, *args): 
-        self.__dim = args[0] 
-        self.__elements_list = [None] * self.__dim # FIXME
+        self.dim = args[0] # FIXME поменяла на геттер
+        self.elements_list = [None] * self.dim # FIXME поменяла на геттер
         self.__matrix = np.zeros((self.__dim, self.__dim))
         self.__current_index = None # FIXME: вангую какую-нибудь херотень в граничных случаях
         print(self.__matrix) # FIXME: убрать потом 
@@ -127,59 +127,6 @@ class Net(metaclass = MetaSingleton):
         self.__add_element_in_list(element)
         self.__add_element_in_matrix(element, **kwargs)
         # Нужен ли здесь return? 
-
-    @property # FIXME 
-    def vars(self): 
-        self.__vars = [] # FIXME 
-        for element in self.elements_list: 
-            self.__vars += [*element.vars] 
-        return self.__vars 
-    
-    @vars.setter 
-    def vars(self, vars): 
-        for element in self.elements_list: 
-            slice_size = len(element.vars) 
-            vars_to_load = vars[0:slice_size] 
-            element.vars = vars_to_load # FIXME 
-            vars = vars[slice_size:]
-    
-
-    def generate_vars_list(self): # FIXME: Дублирование с геттером! 
-        self.__vars = [] # FIXME 
-        for element in self.elements_list: 
-            try: 
-                self.__vars.extend(element.vars) # Обработка исключения, если напоролись на рецептор
-            except: 
-                continue
-        return self.__vars
-
-    def generate_ode_system(self): # FIXME: аргументы... 
-        from src.receptor import Receptor # FIXME: только для отладки!
-        def ode_system(vars, t): 
-            self.vars = vars
-            result = [] # FIXME 
-            for element in self.elements_list: 
-                if isinstance(element, Receptor): # FIXME: Отладочное условие!
-                    print("I_rec = ",element.output)
-                else: 
-                    result.extend(element.model(t))
-            return result
-        self.ode_system = ode_system 
-        return self.ode_system 
-    
-    ## ------ Экспериментальный блок -------
-    
-    # def ode_system(self, vars, t): 
-    #     self.vars = vars 
-    #     for element in self.elements_list: 
-    #             result += [*element.model(t)]
-
-
-    def  ode_solution(self, t): 
-        from scipy.integrate import odeint
-        result = odeint(self.ode_system, self.vars, t) 
-        return result
-
 
     
     

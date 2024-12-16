@@ -5,7 +5,7 @@ from src.neuron import Neuron
 from src.muscle import Muscle 
 from src.receptor import Receptor
 from src.Iapp_patterns import I_impulse, I_period_impulse 
-from src.ode_solution import ode_solution 
+from src.ode_system import ODE_system  
 
 from matplotlib import pyplot as p
 
@@ -16,8 +16,9 @@ muscle = Muscle(input = neuron)
 receptor = Receptor(input = muscle)
 
 ## Решение модели
-t = np.linspace(0, 500, 500)
-result = ode_solution(net, t)
+t = np.linspace(0, 500, 500) 
+ode_system = ODE_system()
+result = ode_system.solution(t)
 
 
 ##---- Построение графика, потому что как обычно нихрена не работает ---------
