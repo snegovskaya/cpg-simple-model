@@ -56,7 +56,7 @@ class ODE_system(): # FIXME: Пока делаю его без наследов�
                 element.vars = vars_to_load # FIXME 
                 vars = vars[slice_size:] 
 
-    def right_part(self, *args, **kwargs): # FIXME: аргументы... 
+    def right_part(self, vars, t): # FIXME: аргументы... 
         def right_part_inner(vars, t): 
             self.vars = vars
             result = [] # FIXME 
@@ -84,7 +84,7 @@ class ODE_system(): # FIXME: Пока делаю его без наследов�
     
 
     def solution(self, t): # FIXME: Всё перекурочено! 
-        result = odeint(self.right_part, self.__vars, t) 
+        result = odeint(self.right_part, self.vars, t) # FIXME 
         return result
 
 def delegate_Muscle(obj, vars, t, **kwargs): # Нужно ли сюда именно впихивать t? 
