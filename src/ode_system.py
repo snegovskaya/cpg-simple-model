@@ -56,16 +56,18 @@ class ODE_system(): # FIXME: Пока делаю его без наследов�
                 element.vars = vars_to_load # FIXME 
                 vars = vars[slice_size:] 
 
-    def right_part(self, vars, t): # FIXME: криво написано, с кривыми названиями 
-        self.vars = vars
-        right_part = [] # FIXME: Обнуляем, видимо 
-        for element in self.elements_list: 
-            if element.model == None:
-                print("I_rec = ",element.output)
-            else: 
-                right_part.extend(element.model(t))
-        # Ну тут вопрос, на самом деле: а что возвращать?
-        # return self.__right_part 
+    def right_part(self, *args, **kwargs): # FIXME: аргументы... 
+        def right_part_inner(vars, t): 
+            self.vars = vars
+            result = [] # FIXME 
+            for element in self.elements_list: 
+                if element.model == None: 
+                    print("I_rec = ",element.output)
+                else: 
+                    result.extend(element.model(t))
+            return result
+        self.__right_part = right_part_inner 
+        return self.__right_part
     
 
     def generate_vars_list(self): # FIXME: Дублирование с геттером! 
@@ -77,24 +79,12 @@ class ODE_system(): # FIXME: Пока делаю его без наследов�
                 continue
         return self.__vars
 
-    def generate_ode_system(self): # FIXME: аргументы... 
-        from src.receptor import Receptor # FIXME: только для отладки!
-        def ode_system(vars, t): 
-            self.vars = vars
-            result = [] # FIXME 
-            for element in self.elements_list: 
-                if isinstance(element, Receptor): # FIXME: Отладочное условие!
-                    print("I_rec = ",element.output)
-                else: 
-                    result.extend(element.model(t))
-            return result
-        self.ode_system = ode_system 
-        return self.ode_system 
+ 
     
     
 
     def solution(self, t): # FIXME: Всё перекурочено! 
-        result = odeint(self.right_part, self.vars, t) 
+        result = odeint(self.right_part, self.__vars, t) 
         return result
 
 def delegate_Muscle(obj, vars, t, **kwargs): # Нужно ли сюда именно впихивать t? 
