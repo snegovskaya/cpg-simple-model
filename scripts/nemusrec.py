@@ -11,7 +11,7 @@ from matplotlib import pyplot as p
 
 ## Задание сети 
 net = Net(3) # FIXME: динамическое расширение сети 
-neuron = Neuron(net = net, input = I_period_impulse) # pars = {"impulseAmpl": 10, "impulseLength": 10, "tStart": 5}
+neuron = Neuron(net = net, input = [I_period_impulse]) # pars = {"impulseAmpl": 10, "impulseLength": 10, "tStart": 5}
 muscle = Muscle(input = neuron) 
 receptor = Receptor(input = muscle)
 
@@ -24,7 +24,17 @@ result = ode_system.solution(t)
 ##---- Построение графика, потому что как обычно нихрена не работает ---------
 v, m, n, h, CN, F = result.T # Вернуть 
 # v, m, n, h = result.T # Тест для одного 
-Iapp_array = [I_period_impulse(t_meaning) for t_meaning in t]
+Iapp_array = [I_period_impulse(t_meaning) for t_meaning in t] 
+
+def get_I_receptor(F_array): # Костыль, чтобы чекнуть рецептор 
+    I_receptor = [] 
+    for F_meaning in F_array: 
+        receptor.F = F_meaning  
+        I_receptor.append(receptor.I) 
+    return I_receptor 
+
+I_receptor = get_I_receptor(F)
+
 
 fig = p.figure() 
 # p.plot(t, v) 
@@ -34,7 +44,8 @@ fig = p.figure()
 p.plot(t, [magnitude*1e1 for magnitude in Iapp_array], label = "Iapp (10^2)")
 # p.plot(t, [input(tmeaning)*10 for tmeaning in t], label = 'Iapp (10x)') # масштаб x10 
 p.plot(t, v, label = 'v')
-p.plot(t, F,label = 'F')
+p.plot(t, F,label = 'F') 
+p.plot(t, I_receptor, label = 'I_receptor')
 # # p.plot(t, FN,label = 'FN') # FIXME Тестовая строчка, удалить
 # p.plot(t, CN*1e-1, label = 'CN (0.1x)')
 # p.xlabel('$t, \: \mathrm{мс}$')

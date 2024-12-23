@@ -114,7 +114,7 @@ class Net(metaclass = MetaSingleton):
                 # или сделать программу с вариативным поведением для одного или для нескольких input'ов
                 self.matrix[self.current_index][input_index] = 1 # Приватный параметр на геттер
         except TypeError: 
-            if input_indices in (0, int):
+            if type(input_indices) is int: # FIXME!!! 
                 print("input сейчас — это одна чиселка")
                 input_index = input_indices
                 self.matrix[self.current_index][input_index] = 1
@@ -128,6 +128,11 @@ class Net(metaclass = MetaSingleton):
         self.__add_element_in_matrix(element, **kwargs)
         # Нужен ли здесь return? 
 
+    # Чтобы исправить задание матрицы
+    # def set_matix(self, element, **kwargs): 
+    #     self.__current_index = None 
+    #     self.__next__()
+    #     self.__add_element_in_matrix(element, **kwargs)
     
     
 

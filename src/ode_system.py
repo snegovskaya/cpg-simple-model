@@ -56,19 +56,29 @@ class ODE_system(): # FIXME: Пока делаю его без наследов�
                 element.vars = vars_to_load # FIXME 
                 vars = vars[slice_size:] 
 
-    def right_part(self, vars, t): # FIXME: аргументы... 
+    def right_part(self, *args, **kwargs): # FIXME: аргументы... 
         def right_part_inner(vars, t): 
             self.vars = vars
             result = [] # FIXME 
             for element in self.elements_list: 
                 if element.model == None: 
-                    print("I_rec = ",element.output)
+                    print("Код дошёл до метки успеха") # FIXME: Пока отладочный вариант 
                 else: 
                     result.extend(element.model(t))
             return result
         self.__right_part = right_part_inner 
         return self.__right_part
     
+
+    def generate_ode_system(self): # FIXME: аргументы... 
+        def ode_system(vars, t): 
+            self.vars = vars
+            result = [] # FIXME 
+            for element in self.elements_list: 
+                result.extend(element.model(t))
+            return result
+        self.ode_system = ode_system 
+        return self.ode_system 
 
     def generate_vars_list(self): # FIXME: Дублирование с геттером! 
         self.__vars = [] # FIXME 
@@ -84,7 +94,7 @@ class ODE_system(): # FIXME: Пока делаю его без наследов�
     
 
     def solution(self, t): # FIXME: Всё перекурочено! 
-        result = odeint(self.right_part, self.vars, t) # FIXME 
+        result = odeint(self.right_part(), self.vars, t) # FIXME 
         return result
 
 def delegate_Muscle(obj, vars, t, **kwargs): # Нужно ли сюда именно впихивать t? 
