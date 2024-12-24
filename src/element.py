@@ -93,10 +93,10 @@ class Element:
         else: # FIXME: Надо поднять какую-нибудь ошибку 
             print("Для этого элемента нет input'a") 
             input = None 
-        self.net.add_element(self, input = input) 
+        self.net.add_element(self) 
         self.index = self.net.current_index 
         self.input_node = input # FIXME: Временная тестовая строчка
-        self.__primary_input_proceed(input)
+        self.__primary_input_proceed(input) # FIXME: на рецепторе чего-то возвращает None
 
     ## Я хз, лучше ли писать функцию по обработке input до или после __init__'а, 
     ## Но в любом случае, вот фукция по обработке __input__'а: 

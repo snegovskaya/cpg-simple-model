@@ -89,13 +89,14 @@ class Net(metaclass = MetaSingleton):
         self.elements_list[self.current_index] = element # Тут тоже заменяю приватный атрибут на его геттер
         return self.elements_list 
     
-    def __add_element_in_matrix(self, element, **kwargs): # Добавление нового элемента 
-        try:
-            input = kwargs['input']
-        except KeyError: 
-            print("На input ничего не поступало") 
+    def __add_element_in_matrix(self, element): # Добавление нового элемента 
+        # try:
+        #     input = kwargs['input']
+        # except KeyError: 
+        #     print("На input ничего не поступало") 
 
-        def get_input_indices(input): 
+
+        def get_input_indices(input): #FIXME: Где-то здесь проблема с inputом: он сейчас передаётся как число!
             try:
                 if isinstance(input, tuple):
                     return tuple(map(input.index, input)) 
@@ -108,7 +109,7 @@ class Net(metaclass = MetaSingleton):
             # <Везде проставить единички>
         
         # Аыаыаы, пошёл крепкий алкоголь...
-        input_indices = get_input_indices(input) # FIXME см. ниже: привела к единому виду
+        input_indices = get_input_indices(element.input_node) # FIXME см. ниже: привела к единому виду
         try: 
             for input_index in input_indices: # FIXME: нужна проверка, что input_indices — это tuple!
                 # или сделать программу с вариативным поведением для одного или для нескольких input'ов
@@ -122,17 +123,16 @@ class Net(metaclass = MetaSingleton):
                 pass
         return self.matrix 
     
-    def add_element(self, element, **kwargs): 
+    def add_element(self, element): 
         self.__next__()
         self.__add_element_in_list(element)
-        self.__add_element_in_matrix(element, **kwargs)
-        # Нужен ли здесь return? 
 
-    # Чтобы исправить задание матрицы
-    # def set_matix(self, element, **kwargs): 
-    #     self.__current_index = None 
-    #     self.__next__()
-    #     self.__add_element_in_matrix(element, **kwargs)
+    # Чтобы исправить задание матрицы # FIXME: Полностью переписать!
+    def set_matix(self): 
+        self.__current_index = None 
+        for element in self.__elements_list: 
+            self.__next__()
+            self.__add_element_in_matrix(element)
     
     
 

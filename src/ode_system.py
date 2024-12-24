@@ -71,6 +71,7 @@ class ODE_system(): # FIXME: Пока делаю его без наследов�
     
 
     def generate_ode_system(self): # FIXME: аргументы... 
+        self.set_matrix(input = input)
         def ode_system(vars, t): 
             self.vars = vars
             result = [] # FIXME 

@@ -11,9 +11,10 @@ from matplotlib import pyplot as p
 
 ## Задание сети 
 net = Net(3) # FIXME: динамическое расширение сети 
-neuron = Neuron(net = net, input = [I_period_impulse]) # pars = {"impulseAmpl": 10, "impulseLength": 10, "tStart": 5}
+neuron = Neuron(net = net, input = I_period_impulse) # pars = {"impulseAmpl": 10, "impulseLength": 10, "tStart": 5}
 muscle = Muscle(input = neuron) 
-receptor = Receptor(input = muscle)
+receptor = Receptor(input = muscle) 
+net.set_matix()
 
 ## Решение модели
 t = np.linspace(0, 500, 500) 
