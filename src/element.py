@@ -87,22 +87,21 @@ class Element:
         if 'name' in kwargs: 
             self.name = kwargs['name'] 
         else: 
-            print("текущий элемент безымянный")
+            print("Текущий элемент безымянный")
         if 'input' in kwargs: 
-            input = kwargs['input'] # FIXME: Здесь рано загонять значение в self.__input 
+            self.input_node = kwargs['input'] # Видимо, без input_node пока не обойтись, и их с собственно input нужно разделять
         else: # FIXME: Надо поднять какую-нибудь ошибку 
             print("Для этого элемента нет input'a") 
-            input = None 
+            self.input_node = None 
         self.net.add_element(self) 
         self.index = self.net.current_index 
-        self.input_node = input # FIXME: Временная тестовая строчка
-        self.__primary_input_proceed(input) # FIXME: на рецепторе чего-то возвращает None
+        # self.__primary_input_proceed(self.input_node) # FIXME: на рецепторе чего-то возвращает None
 
     ## Я хз, лучше ли писать функцию по обработке input до или после __init__'а, 
     ## Но в любом случае, вот фукция по обработке __input__'а: 
 
    # Экспериментальная функция на замену старой      
-    def __primary_input_proceed(self, input): 
+    def primary_input_proceeding(self, input): 
         if isinstance (input, tuple): 
             self.__multiple_input_proceeding(input) # = __primary_input_proceed(input) 
         else: 
@@ -114,7 +113,7 @@ class Element:
                 input_proceeded[input.index(source)] = self.__single_input_proceeding(source)
             return sum(input_proceeded) # Achtung! Выполняю втупую суммирование входных сигналов
 
-    def __single_input_proceeding(self,input): # Функция обработки сигнала из одного источника
+    def __single_input_proceeding(self, input): # Функция обработки сигнала из одного источника
         if isinstance(input, (Element)):  
             # Нужно будет различать input как элемент и как число 
             self.__input = input # Вводим поле input'а как элемента 
@@ -149,7 +148,7 @@ class Element:
         # self.input_value = input_value_getter(self)
           
             
-    def __input_proceeding(self, input): 
+    def input_proceeding(self, input): 
         def single_input_proceeding(input): # Функция обработки сигнала из одного источника
             if isinstance(input, (Element)): 
                 if input.output is None: 

@@ -72,7 +72,7 @@ class Net(metaclass = MetaSingleton):
         pass 
 
     def __next__(self): # Получение следующего элемента; в итоге будет юзаться какой-то из этих двух методов
-        if self.__current_index == 0 or isinstance(self.__current_index, int): 
+        if isinstance(self.__current_index, int): 
             if self.__current_index < self.__dim: 
                 self.__current_index += 1 
             else:
@@ -90,16 +90,23 @@ class Net(metaclass = MetaSingleton):
         return self.elements_list 
     
     def __add_element_in_matrix(self, element): # Добавление нового элемента 
-        # try:
-        #     input = kwargs['input']
-        # except KeyError: 
-        #     print("На input ничего не поступало") 
+        try:
+            input = element.input_node 
+            # element.primary_input_proceeding(input) # FIXME: Ну тут костыль на костыле, конечно...
+        except KeyError: 
+            print("На input ничего не поступало") 
 
 
         def get_input_indices(input): #FIXME: Где-то здесь проблема с inputом: он сейчас передаётся как число!
+            from src.element import Element # FIXME Это говнокод, но я пока не знаю, как его избежать 
             try:
-                if isinstance(input, tuple):
-                    return tuple(map(input.index, input)) 
+                if isinstance(input, tuple) or isinstance(input, list): 
+                    input_indices = []
+                    for input_element in input: 
+                        if isinstance(input_element, Element):
+                            input_indices.append(input_element.index) 
+                    return input_indices
+                    # return tuple(map(input.index, input)) # FIXME: Тут какая-то фигня происходит
                 else: 
                     return input.index
             except AttributeError: 
