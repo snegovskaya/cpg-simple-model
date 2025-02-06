@@ -106,26 +106,61 @@ class Element:
         # self.__primary_input_proceed(self.input_nodes) # FIXME: на рецепторе чего-то возвращает None 
 
     def primary_input_proceeding(self, input): 
+        """ 
+        Приведение входного сигнала, заданного в произвольной форме, 
+        к единому формату списка 
+        """ 
         if isinstance (input, tuple) or isinstance(input, list): 
             return list(input)
         else: 
             return list(input) 
         
     def input_proceeding(self, *args, **kwargs): 
+        """ 
+        Преобразование, делающее из информации о входных элементах итоговых входной сигнал
+        """ 
+        input_values = [] 
         for node in self.input_nodes: 
             if node is int: 
                 pass 
             elif callable(node): 
-                pass 
+                input_values.append(node(*args, **kwargs)) 
             elif isinstance(node, Element): 
-                return node.output
+                input_values.append(node.output) 
+            return sum(input_values)
 
     def get_input_indices(self): 
+        """ 
+        Функция нужна, чтобы из всего, что загружается в input, 
+        отидентифицировать непосредственно элементы
+        """ 
         result = []
         for input_node in self.input_nodes: 
             if isinstance(input_node, Element): 
                 result.append(input_node.index)
-        return result
+        return result 
+    
+    # @property  
+    def input(self, *args, **kwargs): 
+        """ 
+        Очень сложный геттер для input'а, который должен срабатывать хрен знает когда
+        """ 
+        from src.neuron import Neuron # FIXME: убрать потом!
+        # Давай так: оно должно возвращать функцию, которую если вызвать от t, то она сработает
+        # Сейчас это полная копия input_proceeding
+        input_values = [] 
+        for node in self.input_nodes: 
+            if node is int: 
+                input_values.append(node)
+            elif callable(node): 
+                input_values.append(node(*args, **kwargs)) 
+            elif isinstance(node, Element): 
+                input_values.append(node.output) 
+        if isinstance(self, Neuron):
+            print("Отладка: массив input_values: ", input_values)
+        self.__input = sum(input_values) 
+
+        return self.__input
 #-------------------- ниже — неактуальные версии --------------------
 
     ## Я хз, лучше ли писать функцию по обработке input до или после __init__'а, 
@@ -152,12 +187,7 @@ class Element:
         if isinstance(input_nodes, Element): 
             self.__input = input_nodes.output 
     # Или забить на начальные значения input'а и работать с ним только через сеттер?..
-    @property 
-    def input(self): 
-        input_nodes = self.input_nodess # Временная заглушка 
-        if isinstance(input_nodes, Element): 
-            self.__input = input_nodes.output
-        return self.__input  
+  
     
     def __multiple_input_proceeding(self, input): # FIXME Костыль! 
             input_proceeded = list((0,)* len(input)) 

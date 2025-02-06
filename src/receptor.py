@@ -18,12 +18,13 @@ class Receptor(Element):
     ## Геттеры и сеттеры: 
     @property 
     def output(self): 
-        self.__output = self.I()
+        self.__output = self.I
         return self.__output 
     
 
     @property 
     def F(self): 
+        self.__F = self.input()
         return self.__F 
     
     @F.setter #  FIXME: Временный костыль
@@ -39,11 +40,6 @@ class Receptor(Element):
     def I(self): 
         # return self.r() 
         return 2 * self.F # Тестовое значение 
-    
-    @ property 
-    def output(self): 
-        self.__output = self.I 
-        return self.__output 
 
     def get_x(self): 
         self.x = self.F 
