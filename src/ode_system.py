@@ -19,10 +19,17 @@ class ODE_system(): # FIXME: Пока делаю его без наследов�
         print("Инициализация класса ODE_system")
         # super().__init__(self) # Вот здесь собака зарыта! 
         self.net = Net(1) 
-        self.elements_list = self.net.elements_list
+        self.elements_list = self.net.elements_list 
+        # Здесь нужно либо сгенерировать матрицу, чтобы не делать это вручную, либо проверить, что матрица уже сгенерирована 
+        self.net.set_matix() 
+        # И сразу после этого нужно установить inputы: 
+        # self.set_inputs()
         self.__vars = [] 
         self.__right_part = [] 
 
+    def set_inputs(self): 
+        for element in self.elements_list: 
+            element.set_input()
 
     @property # FIXME
     def vars(self): 

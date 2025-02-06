@@ -5,7 +5,7 @@ class Receptor(Element):
     A spindle model taken from Matthews & Stein (1969). Laplace notation is used.
     """ 
     r = 1 # s^{-1}, instant frequency of receptor's spiking 
-    __F = None
+    __F = 0
     k = 1 # unitless, coefficient for namely this receptor model 
     phi = 1 # unitless, phase of receptor's spiking 
     A = 1 # mV, amplitude of receptor's spiking 
@@ -33,7 +33,7 @@ class Receptor(Element):
 
     def __init__(self, **kwargs): 
         super().__init__(**kwargs) # Вызов __init__'а из Element 
-        F = self.input 
+        # F = self.input # FIXME: Раскомментировать потом!!!
     
     @ property 
     def I(self): 

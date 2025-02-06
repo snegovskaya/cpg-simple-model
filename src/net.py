@@ -1,4 +1,5 @@
 import numpy as np 
+# from src.element import Element
 # from src.receptor import Receptor # FIXME: только для отладки!
 
 ## Метакласс для переопределения метода __call__ при вызове класса Net 
@@ -85,50 +86,78 @@ class Net(metaclass = MetaSingleton):
     ## Добавление нового элемента 
     # FIXME: Тут щас творится полная жопа! 
 
+    def single_input_proceeding(node): # Функции просто input_proceeding пока нет вообще
+        # FIXME: недописано
+        '''
+        Функция, которая в отличие от primary_input_proceeding, дова 
+        '''
+        pass
+
     def __add_element_in_list(self, element): 
         self.elements_list[self.current_index] = element # Тут тоже заменяю приватный атрибут на его геттер
         return self.elements_list 
     
     def __add_element_in_matrix(self, element): # Добавление нового элемента 
-        try:
-            input = element.input_node 
-            # element.primary_input_proceeding(input) # FIXME: Ну тут костыль на костыле, конечно...
-        except KeyError: 
-            print("На input ничего не поступало") 
-
-
-        def get_input_indices(input): #FIXME: Где-то здесь проблема с inputом: он сейчас передаётся как число!
-            from src.element import Element # FIXME Это говнокод, но я пока не знаю, как его избежать 
-            try:
-                if isinstance(input, tuple) or isinstance(input, list): 
-                    input_indices = []
-                    for input_element in input: 
-                        if isinstance(input_element, Element):
-                            input_indices.append(input_element.index) 
-                    return input_indices
-                    # return tuple(map(input.index, input)) # FIXME: Тут какая-то фигня происходит
-                else: 
-                    return input.index
-            except AttributeError: 
-                return None
+        # FIXME: подъехала новая версия: 
+        # element.input_proceeding()
+           # На выходе должен перерабатывать element.input_nodes в: 
+              # а) список output'ов для каждой ноды — записать в переменную total_input; 
+              # б) индексы, куда 
         
-        # for input_index in input.index: 
-            # <Везде проставить единички>
+        input_indices = element.get_input_indices() # см. input_indices
+        for input_index in input_indices: 
+            self.matrix[self.current_index][input_index] = 1
+
+        # if element.input_nodes == None: 
+        #     print("АШЫПКА: у элемента пустой вход!") 
+        # else: 
+        #     for node in element.input_nodes: 
+        #         if node is Element: 
+        #             pass
+
+        #     # Проход по всем node in input_nodes 
+        #         # single_input_proceeding, который включает в себя: 
+        #             # Тест на тип input'а (самое главное!) 
+        #             # И в зависимости от типа работу с подфункциями 
+    
+        # try:
+        #     input = element.input_nodes 
+        #     # element.primary_input_proceeding(input) # FIXME: Ну тут костыль на костыле, конечно...
+        # except KeyError: 
+        #     print("На input ничего не поступало") 
+
+        # def get_input_indices(input): #FIXME: Где-то здесь проблема с inputом: он сейчас передаётся как число!
+        #     from src.element import Element # FIXME Это говнокод, но я пока не знаю, как его избежать 
+        #     try:
+        #         if isinstance(input, tuple) or isinstance(input, list): 
+        #             input_indices = []
+        #             for input_element in input: 
+        #                 if isinstance(input_element, Element):
+        #                     input_indices.append(input_element.index) 
+        #             return input_indices
+        #             # return tuple(map(input.index, input)) # FIXME: Тут какая-то фигня происходит
+        #         else: 
+        #             return input.index
+        #     except AttributeError: 
+        #         return None
         
-        # Аыаыаы, пошёл крепкий алкоголь...
-        input_indices = get_input_indices(element.input_node) # FIXME см. ниже: привела к единому виду
-        try: 
-            for input_index in input_indices: # FIXME: нужна проверка, что input_indices — это tuple!
-                # или сделать программу с вариативным поведением для одного или для нескольких input'ов
-                self.matrix[self.current_index][input_index] = 1 # Приватный параметр на геттер
-        except TypeError: 
-            if type(input_indices) is int: # FIXME!!! 
-                print("input сейчас — это одна чиселка")
-                input_index = input_indices
-                self.matrix[self.current_index][input_index] = 1
-            else: 
-                pass
-        return self.matrix 
+        # # for input_index in input.index: 
+        #     # <Везде проставить единички>
+        
+        # # Аыаыаы, пошёл крепкий алкоголь...
+        # input_indices = get_input_indices(element.input_node) # FIXME см. ниже: привела к единому виду
+        # try: 
+        #     for input_index in input_indices: # FIXME: нужна проверка, что input_indices — это tuple!
+        #         # или сделать программу с вариативным поведением для одного или для нескольких input'ов
+        #         self.matrix[self.current_index][input_index] = 1 # Приватный параметр на геттер
+        # except TypeError: 
+        #     if type(input_indices) is int: # FIXME!!! 
+        #         print("input сейчас — это одна чиселка")
+        #         input_index = input_indices
+        #         self.matrix[self.current_index][input_index] = 1
+        #     else: 
+        #         pass
+        # return self.matrix 
     
     def add_element(self, element): 
         self.__next__()
@@ -138,8 +167,9 @@ class Net(metaclass = MetaSingleton):
     def set_matix(self): 
         self.__current_index = None 
         for element in self.__elements_list: 
-            self.__next__()
-            self.__add_element_in_matrix(element)
+            element.input_proceeding() # ACHTUNG! Написать эту функцию!
+            self.__next__() 
+            self.__add_element_in_matrix(element) 
     
     
 

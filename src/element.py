@@ -10,6 +10,7 @@ class Element:
     model = None # FIXME: Возможно, имеет смысл перевести её в приват и добавить геттеры / сеттеры 
     __vars = None
     __input = None # входной сигнал $ FIXME Аchtung: что делать, если входных сигналов несколько (дендриты)? 
+    input_nodes = None # входные элементы в графе 
     # __input давать в виде кортежа со ссылками на «входные» элементы
     __output = None # выходной сигнал 
 
@@ -41,14 +42,14 @@ class Element:
 
     @property
     def input(self, *args, **kwargs): 
-        if isinstance(self.input_node, (Element)):
-            element =  self.input_node
+        if isinstance(self.input_nodes, (Element)):
+            element =  self.input_nodes
             if element.output is None: 
                 self.__input = 0 
             else: 
                 self.__input = element.output 
-        elif callable(self.input_node): 
-            input_func = self.input_node
+        elif callable(self.input_nodes): 
+            input_func = self.input_nodes
             self.__input = input_func
         # FIXME: Должна ли здесь быть обработка? Опасное место.
         return self.__input 
@@ -83,29 +84,80 @@ class Element:
         return super().__new__(cls)
     
     ## Это вызовется после создания объекта класса:
-    def __init__(self, *args, **kwargs):  # FIXME: Не знаю, насколько тут нужны *args
+    def __init__(self, *args, **kwargs):  # FIXME: Не знаю, насколько тут нужны *args 
+        """ 
+        kwargs - словарь, содержащий след. поля: 
+
+        name – опционально; 
+        input – в произвольном формате FIXME: это важно!
+        """
         if 'name' in kwargs: 
             self.name = kwargs['name'] 
         else: 
             print("Текущий элемент безымянный")
         if 'input' in kwargs: 
-            self.input_node = kwargs['input'] # Видимо, без input_node пока не обойтись, и их с собственно input нужно разделять
+            # FIXME: сделать предобработку input'a, чтобы input_nodes был массивом 
+            self.input_nodes = self.primary_input_proceeding(kwargs['input']) # Видимо, без input_nodes пока не обойтись, и их с собственно input нужно разделять
         else: # FIXME: Надо поднять какую-нибудь ошибку 
             print("Для этого элемента нет input'a") 
-            self.input_node = None 
+            self.input_nodes = None 
         self.net.add_element(self) 
         self.index = self.net.current_index 
-        # self.__primary_input_proceed(self.input_node) # FIXME: на рецепторе чего-то возвращает None
+        # self.__primary_input_proceed(self.input_nodes) # FIXME: на рецепторе чего-то возвращает None 
+
+    def primary_input_proceeding(self, input): 
+        if isinstance (input, tuple) or isinstance(input, list): 
+            return list(input)
+        else: 
+            return list(input) 
+        
+    def input_proceeding(self, *args, **kwargs): 
+        for node in self.input_nodes: 
+            if node is int: 
+                pass 
+            elif callable(node): 
+                pass 
+            elif isinstance(node, Element): 
+                return node.output
+
+    def get_input_indices(self): 
+        result = []
+        for input_node in self.input_nodes: 
+            if isinstance(input_node, Element): 
+                result.append(input_node.index)
+        return result
+#-------------------- ниже — неактуальные версии --------------------
 
     ## Я хз, лучше ли писать функцию по обработке input до или после __init__'а, 
-    ## Но в любом случае, вот фукция по обработке __input__'а: 
-
-   # Экспериментальная функция на замену старой      
+    ## Но в любом случае, вот фукция по обработке __input__'а:  
+        
+    # Для kwargs['input'] --> element.input_nodes      
     def primary_input_proceeding(self, input): 
-        if isinstance (input, tuple): 
-            self.__multiple_input_proceeding(input) # = __primary_input_proceed(input) 
+        ''' 
+        На данный момент эта функция используется 
+        для приведения input'а элемента в произвольной форме 
+        к списку element.input_nodes
+        ''' 
+        if isinstance (input, list): 
+            return input
+        elif isinstance(input, tuple): 
+            return list(input)
         else: 
-            self.__single_input_proceeding(input) 
+            return [input]
+        
+    # Обработка input'а V.3: # FIXME: я запуталась, на каком месте распаковывать input_nodes и передавать дальше по ссылке или по значению? 
+    def set_input(self): 
+        for input_nodes in self.input_nodess: 
+            print("input_nodes'ов много") 
+        if isinstance(input_nodes, Element): 
+            self.__input = input_nodes.output 
+    # Или забить на начальные значения input'а и работать с ним только через сеттер?..
+    @property 
+    def input(self): 
+        input_nodes = self.input_nodess # Временная заглушка 
+        if isinstance(input_nodes, Element): 
+            self.__input = input_nodes.output
+        return self.__input  
     
     def __multiple_input_proceeding(self, input): # FIXME Костыль! 
             input_proceeded = list((0,)* len(input)) 
@@ -147,39 +199,39 @@ class Element:
             #     return self.__input(*args, **kwargs)
         # self.input_value = input_value_getter(self)
           
-            
-    def input_proceeding(self, input): 
-        def single_input_proceeding(input): # Функция обработки сигнала из одного источника
-            if isinstance(input, (Element)): 
-                if input.output is None: 
-                    return 0 
-                else: 
-                    return input.output # FIXME: Здесь проблема!
-            else:  
-                if callable(input): 
-                    print("Achtung: input — это функция!") # В рамках класса element такой input обрабатывается через жопу
-                    try: 
-                        print(self.t) 
-                    except AttributeError: 
-                        print("Параметр t не был передан")
-                    try:
-                        print(self.pars) # FIXME: Найти эти параметры!
-                    except AttributeError: 
-                        print("Доп. параметров для функции input не существует")
-                elif input is None: 
-                    return 0 
-                return input # FIXME: Дописать обработку всякой хрени, если input не является float'ом или функцией  
+    ## Устаревшая версия        
+    # def input_proceeding(self, input): 
+    #     def single_input_proceeding(input): # Функция обработки сигнала из одного источника
+    #         if isinstance(input, (Element)): 
+    #             if input.output is None: 
+    #                 return 0 
+    #             else: 
+    #                 return input.output # FIXME: Здесь проблема!
+    #         else:  
+    #             if callable(input): 
+    #                 print("Achtung: input — это функция!") # В рамках класса element такой input обрабатывается через жопу
+    #                 try: 
+    #                     print(self.t) 
+    #                 except AttributeError: 
+    #                     print("Параметр t не был передан")
+    #                 try:
+    #                     print(self.pars) # FIXME: Найти эти параметры!
+    #                 except AttributeError: 
+    #                     print("Доп. параметров для функции input не существует")
+    #             elif input is None: 
+    #                 return 0 
+    #             return input # FIXME: Дописать обработку всякой хрени, если input не является float'ом или функцией  
         
-        def multiple_input_proceeding(input): # FIXME 
-            input_proceeded = list((0,)* len(input)) 
-            for source in input:
-                input_proceeded[input.index(source)] = single_input_proceeding(source)
-            return sum(input_proceeded) # Achtung! Выполняю втупую суммирование входных сигналов
+    #     def multiple_input_proceeding(input): # FIXME 
+    #         input_proceeded = list((0,)* len(input)) 
+    #         for source in input:
+    #             input_proceeded[input.index(source)] = single_input_proceeding(source)
+    #         return sum(input_proceeded) # Achtung! Выполняю втупую суммирование входных сигналов
         
-        if isinstance (input, tuple): 
-            return multiple_input_proceeding(input) 
-        else: 
-            return single_input_proceeding(input)
+    #     if isinstance (input, tuple): 
+    #         return multiple_input_proceeding(input) 
+    #     else: 
+    #         return single_input_proceeding(input)
 
     def __str__(self): 
         if self.__name is None: 

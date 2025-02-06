@@ -86,17 +86,17 @@ class Neuron(Element):
 
         self.output = self.v - self.v0 # FIXME 
         
-
-        self.IappFunc = self.input # FIXME: Проблемы с инпутом 
+        # FIXME: Исправить и раскомментировать!!!
+        # self.IappFunc = self.input # FIXME: Проблемы с инпутом 
         # Хорошо бы проверку на callable выполнить именно здесь: 
 
-        if callable(self.IappFunc): 
-            print("Тута править нада!") 
-        try: 
-            self.IappPars = kwargs["pars"] # FIXME: Добыть параметры для функции! 
-        except KeyError: 
-            print("Либо задайте параметры _строго_ с ключевым словом \"pars\", либо идите лесом!")
-            self.IappPars = {}
+        # if callable(self.IappFunc): 
+        #     print("Тута править нада!") 
+        # try: 
+        #     self.IappPars = kwargs["pars"] # FIXME: Добыть параметры для функции! 
+        # except KeyError: 
+        #     print("Либо задайте параметры _строго_ с ключевым словом \"pars\", либо идите лесом!")
+        #     self.IappPars = {}
 
   
     def eq_v(self, *args, **kwargs): 
