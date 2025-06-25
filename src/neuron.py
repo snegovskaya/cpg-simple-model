@@ -251,7 +251,6 @@ class Neuron(Element):
         eq_2 = self.eq_m() 
         eq_3 = self.eq_n() 
         eq_4 = self.eq_h() 
-        print('neuron output = ', self.output) # Убрать потом
         return array([eq_1, eq_2, eq_3, eq_4])
 
 # def delegate_Neuron(obj, vars, t): 

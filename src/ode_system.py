@@ -65,7 +65,7 @@ class ODE_system(): # FIXME: Пока делаю его без наследов�
             result = [] # FIXME 
             for element in self.elements_list: 
                 if element.model == None: 
-                    print("Код дошёл до метки успеха") # FIXME: Пока отладочный вариант 
+                    print("игнорируется эл-т без диффура...") 
                 else: 
                     result.extend(element.model(t))
             return result

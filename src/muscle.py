@@ -39,6 +39,7 @@ class Muscle(Element):
 
     @property 
     def output(self): 
+        print("F на мышце:", self.F)
         return self.F 
     
     @output.setter

@@ -1,4 +1,5 @@
 from src.element import Element 
+from math import sin, pi # Для отладки
 
 class Receptor(Element): 
     """
@@ -18,13 +19,15 @@ class Receptor(Element):
     ## Геттеры и сеттеры: 
     @property 
     def output(self): 
-        self.__output = self.I
+        self.__output = self.I 
+        print("I на рецепторе: ", self.__output)
         return self.__output 
     
 
     @property 
     def F(self): 
-        self.__F = self.input()
+        self.__F = self.input() 
+        print("F на рецепторе: ", self.__F)
         return self.__F 
     
     @F.setter #  FIXME: Временный костыль
@@ -39,7 +42,7 @@ class Receptor(Element):
     @ property 
     def I(self): 
         # return self.r() 
-        return 2 * self.F # Тестовое значение 
+        return sin(self.F + pi) # Тестовое значение 
 
     def get_x(self): 
         self.x = self.F 

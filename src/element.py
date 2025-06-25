@@ -157,7 +157,7 @@ class Element:
             elif isinstance(node, Element): 
                 input_values.append(node.output) 
         if isinstance(self, Neuron):
-            print("Отладка: массив input_values: ", input_values)
+            print("input_values: ", input_values)
         self.__input = sum(input_values) 
 
         return self.__input
