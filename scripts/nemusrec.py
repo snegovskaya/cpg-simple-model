@@ -20,8 +20,11 @@ receptor = Receptor(input = muscle)
 neuron.input_nodes.append(receptor) 
 net.set_matix()
 
-## Решение модели
-t = np.linspace(0, 500, 500) 
+## Решение модели 
+T = 500 # ms 
+N = 500 # points
+t = np.linspace(0, T, N) 
+dt = np.diff(t)[0] # ms, шаг симуляции
 ode_system = ODE_system()
 result = ode_system.solution(t)
 
@@ -66,6 +69,17 @@ p.title("Потенциал на нейроне $v$ и мускульная си
 
 # \n и скважностью импульсов %.0f $\mathrm{мс}$
 p.show(block = True) 
- # 
 
-# print("It works!")
+# Попытка в Фурью: 
+from scipy.fft import fft, fftfreq 
+print("Общее время симуляции T = ", T)
+print("Число точек N = ", N)
+print("Шаг симуляции dt = ", dt) 
+
+freq = fftfreq(N) # Должен выдать 500 точек:(0, 1/500, ..., (250-1)/500, -250/500, ..., -1/500) 
+v_freq = fft(v) # Выдаст 500 неупорядоченных точек (комплексных чисел!)
+
+p.plot(freq[1:N//2], np.abs(v_freq[1:N//2])) 
+# p.xlim(left = 1)
+p.show(block = True) 
+
