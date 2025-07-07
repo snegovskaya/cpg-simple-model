@@ -87,7 +87,7 @@ class Neuron(Element):
         self.output = self.v - self.v0 # FIXME 
         
         # FIXME: Исправить и раскомментировать!!!
-        self.IappFunc = self.input # FIXME: Проблемы с инпутом 
+        self.IappFunc = self.input # FIXME: тестово корректирую: добавила скобочки 
         # Хорошо бы проверку на callable выполнить именно здесь: 
 
         if callable(self.IappFunc): 

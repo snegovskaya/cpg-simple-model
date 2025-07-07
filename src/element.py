@@ -150,10 +150,10 @@ class Element:
         # Сейчас это полная копия input_proceeding
         input_values = [] 
         for node in self.input_nodes: 
-            if node is int: 
+            if (isinstance(node, int)) or (isinstance(node, float)):
                 input_values.append(node)
             elif callable(node): 
-                input_values.append(node(*args, **kwargs)) 
+                input_values.append(node(*args, **kwargs)) # FIXME
             elif isinstance(node, Element): 
                 input_values.append(node.output) 
         if isinstance(self, Neuron):

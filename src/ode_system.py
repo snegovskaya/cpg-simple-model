@@ -99,6 +99,8 @@ class ODE_system(): # FIXME: Пока делаю его без наследов�
 
     def solution(self, t): # FIXME: Всё перекурочено! 
         result = odeint(self.right_part(), self.vars, t) # FIXME 
+        # FIXME: Обнулить сеть! 
+        self.net.current_index = None # FIXME: НАПИСАНО ЧЕРЕЗ ЖОПУ!
         return result
 
 def delegate_Muscle(obj, vars, t, **kwargs): # Нужно ли сюда именно впихивать t? 

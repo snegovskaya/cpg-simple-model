@@ -18,7 +18,7 @@ neuron = Neuron(net = net, input = [I_period_impulse]) # pars = {"impulseAmpl": 
 muscle = Muscle(input = neuron) 
 receptor = Receptor(input = muscle)
 neuron.input_nodes.append(receptor) 
-net.set_matix()
+net.set_matrix()
 
 ## Решение модели 
 T = 500 # ms 

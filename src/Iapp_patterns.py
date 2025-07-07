@@ -1,3 +1,8 @@
+def I_const(Amplitude): 
+    I = Amplitude 
+    return I
+
+
 def I_impulse(t: float, impulseAmpl = 5, impulseLength = 5, tStart = 1):
     if t > tStart and t < tStart + impulseLength:
         I = impulseAmpl

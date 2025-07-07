@@ -164,7 +164,7 @@ class Net(metaclass = MetaSingleton):
         self.__add_element_in_list(element)
 
     # Чтобы исправить задание матрицы # FIXME: Полностью переписать!
-    def set_matix(self, *args, **kwargs): # FIXME: *args и **kwargs потом нужно убрать
+    def set_matrix(self, *args, **kwargs): # FIXME: *args и **kwargs потом нужно убрать
         self.__current_index = None 
         for element in self.__elements_list: 
             # element.input_proceeding(*args, **kwargs) # Закомментировала, т.к. хочу заменить геттером уже при обсчёте
