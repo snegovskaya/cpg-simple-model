@@ -65,13 +65,13 @@ def get_v(Iapp_meaning, T, N): # FIXME: банально пофиксить
     ode_system = ODE_system() 
     t = np.linspace(0, T, N) 
     result = ode_system.solution(t) # FIXME: выдаёт одномерный массив 
-    del ode_system.net # FIXME: Долбанутая ручная чистка сети
-    del neuron.net
+    # del ode_system.net # FIXME: Долбанутая ручная чистка сети
+    # del neuron.net
     v, m, n, h = result.T 
     return v
 
 
-def freq_from_Iapp(T, N, Iapp_probes = np.linspace(0, 10, 10)): 
+def freq_from_Iapp(T, N, Iapp_probes = np.linspace(0, 5, 50)): 
     '''
     Подаётся нейрон и набор константных Iapp; 
     На выходе хотим видеть для каждого Iapp доминирующую частоту; 
@@ -84,11 +84,23 @@ def freq_from_Iapp(T, N, Iapp_probes = np.linspace(0, 10, 10)):
     for Iapp in Iapp_probes: #FIXME: банально пофиксить 
         t = np.linspace(0, T, N) 
         v = get_v(Iapp, T, N) 
-        v_freq = get_v_freq(v, T)
-        dominant_frequencies.append(np.argmax(v_freq)) 
-    
+        # plt.plot(t, v)
+        # plt.show(block = True)
+        v_freq = get_v_freq(v, T) 
+        freq = fftfreq(N)
+        # plt.plot(freq[1:N//2], np.abs(v_freq[1:N//2]))  
+        # plt.show(block = True)
+        dominant_frequencies.append(abs(freq[np.argmax(v_freq)]))
+         
 
-    plot = plt.pyplot(Iapp_probes, dominant_frequencies) 
+    plot = plt.plot(Iapp_probes, dominant_frequencies)
+    plt.title("Зависимость частоты спайкинга $(мс^-1)$ на нейроне ХХ \
+        \n от постоянного внешнего тока $I_{app}$ в диапазоне от 0 до 5 мкА \
+        на 50 точках ") 
+    plt.xlabel('$Iapp, \: \mathrm{мкА}$') 
+    plt.ylabel('$частота, \: \mathrm{мс}^{-1}$') 
+    plt.show(block = True)
+    
     return dominant_frequencies
     # fit(plot, <certain_dependence>)
 
@@ -101,12 +113,15 @@ def Iapp_from_freq(depenence): # FIXME: конкретизировать чер�
     return reverse(dependence) 
 
 if __name__ == "__main__": 
-    Iapp = 1.0 # мкА
     T = 500 # мс
-    N = 500 # точек 
+    N = 100 # точек 
     t = np.linspace(0, T, N) # FIXME: Надо шото сделать с дублированием здесь и в функции
     # v = get_v(Iapp, T, N) 
     # plt.plot(t, v)
-    # v_freq = get_v_freq(v, T) 
-    freq_from_Iapp(T, N) 
-    Iapp_from_freq()
+    # v_freq = get_v_freq(v, T)  
+    Iapp_min = 0 #мкА
+    Iapp_max = 5 #мкА 
+    Iapp_n_points = 50 
+    Iapp_probes = np.linspace(Iapp_min, Iapp_max, Iapp_n_points)
+    freq_from_Iapp(T, N, Iapp_probes) 
+    # Iapp_from_freq()
