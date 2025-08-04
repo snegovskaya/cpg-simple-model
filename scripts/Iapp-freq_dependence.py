@@ -29,16 +29,12 @@ def get_v_freq(v, T): # FIXME: скопипастить Фурью из nemusrec
 
     print("Шаг симуляции dt = ", dt) 
 
-    freq = fftfreq(N) 
+    freq = fftfreq(N, dt) 
     '''Должен выдать N точек:
     [0, 1, ..., N/2-1, -N/2, ..., -1] / N, если N чётное; 
     [0, 1, ..., N/2,   -N/2, ..., -1] / N, если N нечётное.
     ''' 
     v_freq = fft(v) # Выдаст N неупорядоченных точек (комплексных чисел!) 
-
-    # В нуле получается какой-то странный выброс, поэтому:
-    freq = np.delete(freq, 0)
-    freq = np.delete(v_freq, 0)
 
     # plt.plot(freq[1:N//2], np.abs(v_freq[1:N//2])) 
     # # p.xlim(left = 1)
@@ -77,26 +73,31 @@ def freq_from_Iapp(T, N, Iapp_probes = np.linspace(0, 5, 50)):
     На выходе хотим видеть для каждого Iapp доминирующую частоту; 
     Хотя полезнее сразу делать фиттинг функции и выдавать коэф-ты
     '''
-    dominant_frequencies = []
+    dominant_frequencies = [] # FIXME: переделать из списка в массив с заранее выделенной памятью
     v_array = [] 
     v_freq_array = []
 
     for Iapp in Iapp_probes: #FIXME: банально пофиксить 
-        t = np.linspace(0, T, N) 
+        t = np.linspace(0, T, N)
+        dt = np.diff(t)[0] # ms, шаг симуляции 
         v = get_v(Iapp, T, N) 
         # plt.plot(t, v)
         # plt.show(block = True)
-        v_freq = get_v_freq(v, T) 
-        freq = fftfreq(N)
-        # plt.plot(freq[1:N//2], np.abs(v_freq[1:N//2]))  
+        v_freq = get_v_freq(v, T) # FIXME А есть ли именно соответствующий метод для массива?
+        v_freq = np.abs(v_freq[1:N//2]) # Предобработка под задачу поиска макс. частоты
+        freq = fftfreq(N, dt)
+        freq = freq[1:N//2] # Предобработка под задачу поиска макс. частоты
+        # plt.plot(freq[1:N//2], np.abs(v_freq[1:N//2])) # Старая версия, без предобработки 
+        # plt.plot(freq, v_freq)
         # plt.show(block = True)
-        dominant_frequencies.append(abs(freq[np.argmax(v_freq)]))
+        # dominant_frequencies.append(freq[np.argmax(np.abs(v_freq))]) # Старая версия, без предобработки 
+        dominant_frequencies.append(freq[np.argmax(v_freq)])
          
 
     plot = plt.plot(Iapp_probes, dominant_frequencies)
     plt.title("Зависимость частоты спайкинга $(мс^-1)$ на нейроне ХХ \
-        \n от постоянного внешнего тока $I_{app}$ в диапазоне от 0 до 5 мкА \
-        на 50 точках ") 
+        \n от постоянного внешнего тока $I_{app}$ \
+        \n в диапазоне от %.0f до %.0f мкА на 50 точках" %(Iapp_probes[0], Iapp_probes[-1])) 
     plt.xlabel('$Iapp, \: \mathrm{мкА}$') 
     plt.ylabel('$частота, \: \mathrm{мс}^{-1}$') 
     plt.show(block = True)
@@ -115,13 +116,23 @@ def Iapp_from_freq(depenence): # FIXME: конкретизировать чер�
 if __name__ == "__main__": 
     T = 500 # мс
     N = 100 # точек 
-    t = np.linspace(0, T, N) # FIXME: Надо шото сделать с дублированием здесь и в функции
-    # v = get_v(Iapp, T, N) 
+    Iapp1 = 1.15 
+    Iapp2 = 1.25 
+    # t = np.linspace(0, T, N) # FIXME: Надо шото сделать с дублированием здесь и в функции
+    # v1 = get_v(Iapp1, T, N) 
+    # v2 = get_v(Iapp2, T, N)
+    # plt.plot(t, v1)
+    # plt.plot(t, v2) 
+    # plt.show(block = True)
+    # ===
+    # v = get_v(Iapp1, T, N) 
     # plt.plot(t, v)
-    # v_freq = get_v_freq(v, T)  
-    Iapp_min = 0 #мкА
-    Iapp_max = 5 #мкА 
-    Iapp_n_points = 50 
+    # v_freq = get_v_freq(v, T)
+    # v1_freq = get_v_freq(v1, T)
+    # v2_freq = get_v_freq(v2, T) # Вот это вот всё делалось для двух значений 
+    Iapp_min = 0 #мкА # Было 1 мкА
+    Iapp_max = 10 #мкА # Было 1.3 мкА
+    Iapp_n_points = 20 
     Iapp_probes = np.linspace(Iapp_min, Iapp_max, Iapp_n_points)
     freq_from_Iapp(T, N, Iapp_probes) 
     # Iapp_from_freq()
