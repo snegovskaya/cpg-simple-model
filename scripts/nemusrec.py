@@ -30,20 +30,20 @@ result = ode_system.solution(t)
 
 
 ##---- Построение графика, потому что как обычно нихрена не работает ---------
-v, m, n, h, CN, F = result.T # Вернуть 
+v, m, n, h, CN, F, v_rec, m_rec, n_rec, h_rec = result.T # FIXME: вручную добавлены переменные для рецептора-"нейрона" 
 # v, m, n, h = result.T # Тест для одного 
 Iapp_array = [I_period_impulse(t_meaning) for t_meaning in t] 
 
-def get_I_receptor(F_array): # Костыль, чтобы чекнуть рецептор 
-    I_receptor = [] 
-    for F_meaning in F_array: 
-        # receptor.F = F_meaning 
-        # print(F_meaning, " ", receptor.F)
-        # I_receptor.append(receptor.I) 
-        I_receptor.append(sin(F_meaning + pi))
-    return I_receptor 
+# def get_I_receptor(F_array): # Костыль, чтобы чекнуть рецептор 
+#     I_receptor = [] 
+#     for F_meaning in F_array: 
+#         # receptor.F = F_meaning 
+#         # print(F_meaning, " ", receptor.F)
+#         # I_receptor.append(receptor.I) 
+#         I_receptor.append(sin(F_meaning + pi))
+#     return I_receptor 
 
-I_receptor = get_I_receptor(F) 
+I_receptor = v_rec # I_receptor = get_I_receptor(F) 
 
 
 fig = p.figure() 
@@ -55,7 +55,7 @@ p.plot(t, [magnitude*1e1 for magnitude in Iapp_array], label = "Iapp (x10^2)")
 # p.plot(t, [input(tmeaning)*10 for tmeaning in t], label = 'Iapp (10x)') # масштаб x10 
 p.plot(t, v, label = 'v')
 p.plot(t, [magnitude*1 for magnitude in F],label = 'F') 
-p.plot(t, I_receptor, label = "I_receptor") 
+p.plot(t, I_receptor, label = "I_receptor := v_rec") 
 # # p.plot(t, FN,label = 'FN') # FIXME Тестовая строчка, удалить
 # p.plot(t, CN*1e-1, label = 'CN (0.1x)')
 # p.xlabel('$t, \: \mathrm{мс}$')
