@@ -1,7 +1,10 @@
-from src.element import Element 
+import sys
+sys.path.append("/Users/dascha/Job/cpg-simple-model") # для запуска __main__
+from src.element import Element # from src.element import Element # Но вообще с этим надо что-то делать
+from src.neuron import Neuron 
 from math import sin, pi # Для отладки
 
-class Receptor(Element): 
+class Receptor(Neuron): 
     """
     A spindle model taken from Matthews & Stein (1969). Laplace notation is used.
     """ 
@@ -23,6 +26,9 @@ class Receptor(Element):
         print("I на рецепторе: ", self.__output)
         return self.__output 
     
+    @output.setter #FIXME 
+    def output(self, output): 
+        self.__output = output
 
     @property 
     def F(self): 
@@ -39,7 +45,7 @@ class Receptor(Element):
         super().__init__(**kwargs) # Вызов __init__'а из Element 
         # F = self.input # FIXME: Раскомментировать потом!!!
     
-    @ property 
+    @property 
     def I(self): 
         # return self.r() 
         return sin(self.F + pi) # Тестовое значение 
@@ -77,6 +83,8 @@ class Receptor(Element):
     
     
 
-if __name__ == "main": 
+if __name__ == '__main__': 
+    t = 50 # ms # Но вообще linspace с последующим интегрированием
+    F_period = 100 # ms
     import numpy as np
-    receptor = Receptor(input = np.sin)
+    receptor = Receptor(input = np.sin(2*pi*t/F_period))
