@@ -3,10 +3,11 @@ sys.path.append("/Users/dascha/Job/cpg-simple-model")
 from src.neuron import Neuron 
 from src.net import Net 
 from src.ode_system import ODE_system 
-from src.Iapp_patterns import I_const
+from src.Iapp_patterns import I_const 
+from scipy.signal import argrelextrema # Для поиска локальных максимумов в фурье-спектре
 
 import numpy as np 
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt 
 from scipy.fft import fft, fftfreq 
 from scipy.optimize import curve_fit
 
@@ -83,22 +84,26 @@ def freq_from_Iapp(T, N, Iapp_probes = np.linspace(0, 5, 50)):
         dt = np.diff(t)[0] # ms, шаг симуляции 
         v = get_v(Iapp, T, N) 
 
-        plt.plot(t, v) # Отладочный график для малого кол-ва Iapp
-        plt.title("Картина спайков при Iapp = %.2f мкА" %(Iapp))
-        plt.show(block = True)
+        # plt.plot(t, v) # Отладочный график для малого кол-ва Iapp
+        # plt.title("Картина спайков при Iapp = %.2f мкА" %(Iapp))
+        # plt.show(block = True)
 
         v_freq = get_v_freq(v, T) # FIXME А есть ли именно соответствующий метод для массива?
         v_freq = np.abs(v_freq[1:N//2]) # Предобработка под задачу поиска макс. частоты
         freq = fftfreq(N, dt)
         freq = freq[1:N//2] # Предобработка под задачу поиска макс. частоты
         # plt.plot(freq[1:N//2], np.abs(v_freq[1:N//2])) # Старая версия, без предобработки 
-
-        plt.plot(freq, v_freq) # Отладочный график для малого кол-ва Iapp
+        
+        fig, ax = plt.subplots()
+        # ax = plt.axes()
+        ax.set_xlim(0, max(freq)/2) # FIXME: обрезка спектра в пределах первых нескольких частот
+        ax.plot(freq, v_freq) # Отладочный график для малого кол-ва Iapp 
         plt.title("Фурье-разложение картины спайков при Iapp = %.2f мкА" %(Iapp))
         plt.show(block = True) 
 
         # dominant_frequencies.append(freq[np.argmax(np.abs(v_freq))]) # Старая версия, без предобработки 
-        dominant_frequencies.append(freq[np.argmax(v_freq)])
+        dominant_frequency = freq[argrelextrema(v_freq, np.greater)[0][0]] # FIXME: как вариант — peaks от 0
+        dominant_frequencies.append(dominant_frequency)
          
 
     plot = plt.plot(Iapp_probes, dominant_frequencies)
@@ -142,7 +147,7 @@ if __name__ == "__main__":
     # v2_freq = get_v_freq(v2, T) # Вот это вот всё делалось для двух значений 
     Iapp_min = 0.7 #мкА # Было 1 мкА
     Iapp_max = 1.0 #мкА # Было 1.3 мкА
-    Iapp_n_points = 10
+    Iapp_n_points = 2
     Iapp_probes = np.linspace(Iapp_min, Iapp_max, Iapp_n_points)
     dominant_frequencies = freq_from_Iapp(T, N, Iapp_probes) 
     Iapp_from_freq(Iapp_probes, dominant_frequencies) 
