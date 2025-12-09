@@ -22,35 +22,54 @@ class Receptor(Neuron):
     ## Геттеры и сеттеры: 
     @property 
     def output(self): 
+        """ 
+        Организует выход с рецептора — быстрый ток I (который I_fast).
+        """ 
         self.__output = self.I 
         print("I на рецепторе: ", self.__output)
         return self.__output 
     
     @output.setter #FIXME 
     def output(self, output): 
+        """ 
+        Должен принимать на вход, вообще говоря, медленный ток I_slow.
+        """ 
         self.__output = output
 
     @property 
     def F(self): 
-        self.__F = self.input() 
+        """
+        Интерпретирует поданное на вход в self.input как силу F.
+        """
+        self.__F = self.input() # Проверить, в каком виде, так-то, input 
         print("F на рецепторе: ", self.__F)
         return self.__F 
     
-    @F.setter #  FIXME: Временный костыль
+    @F.setter #  FIXME: Временный костыль 
     def F(self, F_meaning): 
+        """
+        Пока что как будто максимум, что имеет смысл делать в этом сеттере — это проверять self.input на адекватность.
+        """
         self.__F = F_meaning
 
 
     def __init__(self, **kwargs): 
-        super().__init__(**kwargs) # Вызов __init__'а из Element 
-        # F = self.input # FIXME: Раскомментировать потом!!!
+        super().__init__(**kwargs) # Вызов __init__'а из Neuron. FIXME: Какие поля нужно доо/переопределять?  
+        self.F = self.input
     
     @property 
     def I(self): 
+        """
+        FIXME: Вот тут нужна схема преобразований! Потому я хз, быстрый это ток или медленный.
+        """
         # return self.r() 
         return sin(self.F + pi) # Тестовое значение 
 
     def get_x(self): 
+        """
+        FIXME: Я хз, что это за параметр, и почему он запихнут в это же property. 
+        Кстати: а декоратор же работает только над def I(self)?
+        """
         self.x = self.F 
         return self.x 
 
