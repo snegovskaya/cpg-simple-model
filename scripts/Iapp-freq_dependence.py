@@ -4,7 +4,7 @@ from src.neuron import Neuron
 from src.net import Net 
 from src.ode_system import ODE_system 
 from src.Iapp_patterns import I_const 
-from scipy.signal import argrelextrema # Для поиска локальных максимумов в фурье-спектре
+from scipy.signal import argrelextrema, find_peaks # Для поиска локальных максимумов в фурье-спектре
 
 import numpy as np 
 import matplotlib.pyplot as plt 
@@ -94,16 +94,20 @@ def freq_from_Iapp(T, N, Iapp_probes = np.linspace(0, 5, 50)):
         freq = freq[1:N//2] # Предобработка под задачу поиска макс. частоты
         # plt.plot(freq[1:N//2], np.abs(v_freq[1:N//2])) # Старая версия, без предобработки 
         
-        fig, ax = plt.subplots()
-        # ax = plt.axes()
-        ax.set_xlim(0, max(freq)/2) # FIXME: обрезка спектра в пределах первых нескольких частот
-        ax.plot(freq, v_freq) # Отладочный график для малого кол-ва Iapp 
-        plt.title("Фурье-разложение картины спайков при Iapp = %.2f мкА" %(Iapp))
-        plt.show(block = True) 
+        # fig, ax = plt.subplots()
+        # # ax = plt.axes()
+        # ax.set_xlim(0, max(freq)/2) # FIXME: обрезка спектра в пределах первых нескольких частот
+        # ax.plot(freq, v_freq) # Отладочный график для малого кол-ва Iapp 
+        # plt.title("Фурье-разложение картины спайков при Iapp = %.2f мкА" %(Iapp))
+        # plt.show(block = True) 
 
         # dominant_frequencies.append(freq[np.argmax(np.abs(v_freq))]) # Старая версия, без предобработки 
-        dominant_frequency = freq[argrelextrema(v_freq, np.greater)[0][0]] # FIXME: как вариант — peaks от 0
+        # dominant_frequency = freq[argrelextrema(v_freq, np.greater)[0][0]] # FIXME: как вариант — find_peaks от 0
+        significant_amplitude = 1e2 # Чтобы отсекать недопики
+        dominant_frequency_index = find_peaks(v_freq, height = significant_amplitude)[0][0]
+        dominant_frequency = freq[dominant_frequency_index]
         dominant_frequencies.append(dominant_frequency)
+        print("Амплитуда пика на основной частоте %.4f мс — %i крокодила" %(dominant_frequency, v_freq[dominant_frequency_index]))
          
 
     plot = plt.plot(Iapp_probes, dominant_frequencies)
@@ -131,32 +135,36 @@ def Iapp_from_freq(Iapp_probes, dominant_frequencies): # FIXME: конкрети
 if __name__ == "__main__": 
     T = 500 # мс
     N = 1000 # точек 
-    Iapp1 = 1.15 
-    Iapp2 = 1.25 
     t = np.linspace(0, T, N) # FIXME: Надо шото сделать с дублированием здесь и в функции
-    v1 = get_v(Iapp1, T, N) 
-    v2 = get_v(Iapp2, T, N)
-    plt.plot(t, v1)
-    plt.plot(t, v2) 
-    plt.show(block = True)
+    # Iapp1 = 1.15 #  Сравнение для двух близких значений
+    # Iapp2 = 1.25 
+    # v1 = get_v(Iapp1, T, N) # 
+    # v2 = get_v(Iapp2, T, N)
+    # plt.plot(t, v1)
+    # plt.plot(t, v2) 
+    # plt.show(block = True)
     # ===
     # v = get_v(Iapp1, T, N) 
     # plt.plot(t, v)
     # v_freq = get_v_freq(v, T)
     # v1_freq = get_v_freq(v1, T)
     # v2_freq = get_v_freq(v2, T) # Вот это вот всё делалось для двух значений 
-    Iapp_min = 0.7 #мкА # Было 1 мкА
-    Iapp_max = 1.0 #мкА # Было 1.3 мкА
-    Iapp_n_points = 2
+    Iapp_min = 1.5 #мкА # Было 1 мкА
+    Iapp_max = 3.0 #мкА # Было 1.3 мкА
+    Iapp_n_points = 10
     Iapp_probes = np.linspace(Iapp_min, Iapp_max, Iapp_n_points)
     dominant_frequencies = freq_from_Iapp(T, N, Iapp_probes) 
     Iapp_from_freq(Iapp_probes, dominant_frequencies) 
 
-    def fitting_func(x, a0, a1, a2, a3, a4): 
-        return a0 * x**4 + a1 * x**3 + a2 * x**2 + a3 * x + a4
+    # def fitting_func(x, a0, a1, a2, a3, a4): # Фиттирование полиномом 4 степени
+    #     return a0 * x**4 + a1 * x**3 + a2 * x**2 + a3 * x + a4 
+
+    def fitting_func(x, x0, k, A, b): # Фиттирование сигмоидой
+        return A / (1 + np.exp(1 / (k * (x-x0)))) + b
     
-    pars, pars_cov = curve_fit(fitting_func, Iapp_probes, dominant_frequencies) 
+    pars, pars_cov = curve_fit(fitting_func, Iapp_probes, dominant_frequencies, p0 = (1.5, 1, 0.3, 0)) 
     fitting_freqs = list(map(lambda x: fitting_func(x, *pars), Iapp_probes)) # FIXME: Почему не работает array от map'а?
+    fig2, ax2 = plt.subplots()
     plt.plot(Iapp_probes, dominant_frequencies, label = 'фактическая зависимость') 
     plt.plot(Iapp_probes, fitting_freqs, label = 'фиттинг')
     plt.xlabel('$частота, \: \mathrm{мс}^{-1}$')
@@ -165,10 +173,14 @@ if __name__ == "__main__":
               \n от его выходной частоты спайкинга") 
     plt.legend()
     plt.show(block = True) 
+    # print("Значения пар-ров кривой фиттинга, \
+    #     \n многочлена 4 порядка: \
+    #     \n a0 = %.2E; \n a1 = %.2E; \n a2 = %.2E; \n a3 = %.2E; \n a4 = %.2E" \
+    #     %(pars[0], pars[1], pars[2], pars[3], pars[4])) 
+
     print("Значения пар-ров кривой фиттинга, \
-        \n многочлена 4 порядка: \
-        \n a0 = %.2E; \n a1 = %.2E; \n a2 = %.2E; \n a3 = %.2E; \n a4 = %.2E" \
-        %(pars[0], pars[1], pars[2], pars[3], pars[4])) 
+        \n сигмоиды вида 1 / (1 + exp(-kx)): \
+        \n x0 = %.2E, k = %.2E, A = %.2E, b = %.2E" % (pars[0], pars[1], pars[2], pars[3]))
 
 '''
 a0 = -9.24E-03; x4 
