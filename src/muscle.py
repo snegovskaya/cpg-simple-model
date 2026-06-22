@@ -42,8 +42,8 @@ class Muscle(Element):
         print("F на мышце:", self.F)
         return self.F 
     
-    @output.setter
-    def output(self, F):
+    @output.setter # FIXME: Вот здесь могут быть проблемы с недоопределённым F. Что будет возвращаться здесь?
+    def output(self, F): 
         self.__output = self.F 
         return self.__output 
     

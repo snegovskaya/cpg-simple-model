@@ -1,12 +1,25 @@
 import sys
-sys.path.append("/Users/dascha/Job/cpg-simple-model") # для запуска __main__
+sys.path.append("/Users/dascha/Job/cpg-simple-model") # для запуска __main__ 
+from numpy import exp, array
 from src.element import Element # from src.element import Element # Но вообще с этим надо что-то делать
 from src.neuron import Neuron 
 from math import sin, pi # Для отладки
 
 class Receptor(Neuron): 
     """
-    A spindle model taken from Matthews & Stein (1969). Laplace notation is used.
+    A spindle model taken from Matthews & Stein (1969). Laplace notation is used. 
+    r(s) = kx (s + 10), where 
+    r: firing rate; 
+    x: muscle length; 
+    k: gain.
+
+    В соответствии с биологическим референсом, 
+    Рецептор — это нейрон с особым типом входа; 
+    Сейчас у меня единственный тип рецептора — мышечное веретено: 
+    Оно работает на удлинении мышцы [\Delta] x и на скорости её удлинения x''; 
+    Но я на это пока что забиваю и передаю на рецептор напрямую силу F; 
+    Сила F — это медленная переменная, которая по капотом переводится в ??? 
+
     """ 
     r = 1 # s^{-1}, instant frequency of receptor's spiking 
     __F = 0
@@ -55,7 +68,8 @@ class Receptor(Neuron):
 
     def __init__(self, **kwargs): 
         super().__init__(**kwargs) # Вызов __init__'а из Neuron. FIXME: Какие поля нужно доо/переопределять?  
-        self.F = self.input
+        self.F = self.input 
+        self.IappFunc = self.input
     
     @property 
     def I(self): 
@@ -97,9 +111,35 @@ class Receptor(Neuron):
     def get_I(self): 
         pass
 
-    # def model_Laplace(self): # Возвращает модель рецептора в Лапласовской нотации
-    #     return k * x * (s + 10) # r(s) = kx(s + 10)
+    def model_Laplace(self): # Возвращает модель рецептора в Лапласовской нотации 
+        """
+        Сейчас это ни к чему не подвязанный кусок;  
+        Потому что итоговая, выходная модель определена в родительском классе Neuron 
+        А так вообще это: 
+        а) Диффур; 
+        б) В Лапласовской нотации; 
+        в) С функцией частоты спайкинга.
+        """ 
+        # --- Заглушки для переменных: --- 
+        s = 1 
+        x = 1 
+        k = 1 
+        # ------ 
+
+        return k * x * (s + 10) # r(s) = kx(s + 10) 
     
+    def model(self, args): 
+        '''
+        Хочу видеть здесь правую часть модели ХХ для нейрона 
+        (На переменные v, m, n, h соответственно), 
+        Которая расширена на несколько уравнений:  
+        Во-первых, есть уравнение
+        ''' 
+        eq_1 = self.eq_v(args) # Напоминаю, что из args у нас только t...
+        eq_2 = self.eq_m() 
+        eq_3 = self.eq_n() 
+        eq_4 = self.eq_h() 
+        return array([eq_1, eq_2, eq_3, eq_4])
     
 
 if __name__ == '__main__': 

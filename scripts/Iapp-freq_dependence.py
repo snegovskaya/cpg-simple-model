@@ -1,3 +1,7 @@
+"""
+Содержательное отсюда находится в самом конце
+"""
+
 import sys
 sys.path.append("/Users/dascha/Job/cpg-simple-model")
 from src.neuron import Neuron 
@@ -133,6 +137,10 @@ def Iapp_from_freq(Iapp_probes, dominant_frequencies): # FIXME: конкрети
     return # reverse(dependence) 
 
 if __name__ == "__main__": 
+    """
+    Скостроляпливание фиттирующей функции с коэффициентами. 
+    Переносить в другие модули либо вручную, либо импортируя отсюда переменную pars
+    """
     T = 500 # мс
     N = 1000 # точек 
     t = np.linspace(0, T, N) # FIXME: Надо шото сделать с дублированием здесь и в функции

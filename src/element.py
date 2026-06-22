@@ -40,10 +40,13 @@ class Element:
     def index(self, index): 
         self.__index = index 
 
-    @property
-    def input(self, *args, **kwargs): 
+    @property 
+    def input(self, *args, **kwargs): # FIXME НУЖНО ВЫДЕЛИТЬ СИЛУ F ДЛЯ РЕЦЕПТОРА!!!
+        """ 
+        Обрабатывает input FIXME: Каким именно образом?
+        """
         if isinstance(self.input_nodes, (Element)):
-            element =  self.input_nodes
+            element =  self.input_nodes # Для класса Muscle: 
             if element.output is None: 
                 self.__input = 0 
             else: 
