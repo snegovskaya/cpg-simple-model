@@ -1,3 +1,5 @@
+import sys
+sys.path.append("/Users/dascha/Job/cpg-simple-model") # для запуска __main__ 
 import numpy as np
 from src.net import Net
 
@@ -9,15 +11,24 @@ class Element:
     __eq_num = 0 # число уравнений в модели 
     model = None # FIXME: Возможно, имеет смысл перевести её в приват и добавить геттеры / сеттеры 
     __vars = None
-    __input = None # входной сигнал $ FIXME Аchtung: что делать, если входных сигналов несколько (дендриты)? 
+    __input = None # входной сигнал 
+    '''
+    FIXME 1. Это число?
+    FIXME 2. Аchtung: что делать, если входных сигналов несколько (дендриты)? 
+    ''' 
     input_nodes = None # входные элементы в графе 
-    # __input давать в виде кортежа со ссылками на «входные» элементы
+    '''
+    FIXME __input давать в виде кортежа со ссылками на «входные» элементы
+    '''
     __output = None # выходной сигнал 
 
     ## Геттеры и сеттеры:
     
     @property
     def name(self): 
+        '''
+        Индивидуальное имя элемента
+        '''
         return self.__name 
     
     @name.setter
@@ -26,6 +37,9 @@ class Element:
 
     @property
     def net(self): 
+        '''
+        Сеть, к которой принадлежит элемент
+        '''
         return self.__net 
     
     @net.setter
@@ -34,6 +48,9 @@ class Element:
 
     @property
     def index(self): 
+        '''
+        Номер элемента в сети
+        '''
         return self.__index 
     
     @index.setter
@@ -75,7 +92,31 @@ class Element:
 
     @vars.setter 
     def vars(self, vars): 
-        print("Нету у тебя vars, сцуко!")
+        print("Нету у тебя vars, сцуко!") 
+
+    ## --- Приватные методы ---
+    
+    def __user_input_processing(self, input): 
+        """
+        Приватный метод, который приводит исходный input элемента, 
+        заданный пользователем в произвольной форме, 
+        к списку в Element.input_nodes
+
+        Вход: Element(input = ...)
+        Выход: Element.input_nodes = [...] 
+
+        FIXME Или засунуть его сразу в геттер input_nodes?.. 
+        Проблема в том, что тогда input_nodes перезаписывается каждый раз, а мне такого щастя нинада
+        """ 
+        if isinstance (input, list): 
+            result = input # FIXME: Или же сразу менять input_nodes
+        elif isinstance(input, tuple): 
+            result = list(input)
+        else: 
+            result = [input] 
+        return result 
+    
+    ## ------
 
     ## Это вызовется перед созданием объекта класса:
     def __new__(cls, *args, **kwargs): 
@@ -91,8 +132,9 @@ class Element:
         """ 
         kwargs - словарь, содержащий след. поля: 
 
-        name – опционально; 
-        input – в произвольном формате FIXME: это важно!
+        'name' – опционально; 
+        'input' – в произвольном формате FIXME: это важно!
+            Здесь 'input' — ключевое слово для пользователя. 
         """
         if 'name' in kwargs: 
             self.name = kwargs['name'] 
@@ -100,24 +142,17 @@ class Element:
             print("Текущий элемент безымянный")
         if 'input' in kwargs: 
             # FIXME: сделать предобработку input'a, чтобы input_nodes был массивом 
-            self.input_nodes = self.primary_input_proceeding(kwargs['input']) # Видимо, без input_nodes пока не обойтись, и их с собственно input нужно разделять
+            # FIXME: user_input = input
+            self.input_nodes = self.__user_input_processing(kwargs['input']) # Видимо, без input_nodes пока не обойтись, и их с собственно input нужно разделять
         else: # FIXME: Надо поднять какую-нибудь ошибку 
             print("Для этого элемента нет input'a") 
             self.input_nodes = None 
         self.net.add_element(self) 
         self.index = self.net.current_index 
         # self.__primary_input_proceed(self.input_nodes) # FIXME: на рецепторе чего-то возвращает None 
-
-    def primary_input_proceeding(self, input): 
-        """ 
-        Приведение входного сигнала, заданного в произвольной форме, 
-        к единому формату списка 
-        """ 
-        if isinstance (input, tuple) or isinstance(input, list): 
-            return list(input)
-        else: 
-            return list(input) 
+ 
         
+
     def input_proceeding(self, *args, **kwargs): 
         """ 
         Преобразование, делающее из информации о входных элементах итоговых входной сигнал
@@ -169,19 +204,6 @@ class Element:
     ## Я хз, лучше ли писать функцию по обработке input до или после __init__'а, 
     ## Но в любом случае, вот фукция по обработке __input__'а:  
         
-    # Для kwargs['input'] --> element.input_nodes      
-    def primary_input_proceeding(self, input): 
-        ''' 
-        На данный момент эта функция используется 
-        для приведения input'а элемента в произвольной форме 
-        к списку element.input_nodes
-        ''' 
-        if isinstance (input, list): 
-            return input
-        elif isinstance(input, tuple): 
-            return list(input)
-        else: 
-            return [input]
         
     # Обработка input'а V.3: # FIXME: я запуталась, на каком месте распаковывать input_nodes и передавать дальше по ссылке или по значению? 
     def set_input(self): 
@@ -275,3 +297,10 @@ class Element:
     def __del__(self): 
         pass # FIXME Прописать, что там должно происходить 
 
+
+# --- Отладка модуля --- 
+if __name__ == '__main__': 
+    net = Net(3)
+    element_1 = Element(name = 'element_1')  
+    element_2 = Element(name = 'element_2', input = (5)) 
+    element_3 = Element(name = 'element_2', input = [element_1, element_2])

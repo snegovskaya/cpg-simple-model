@@ -87,10 +87,18 @@ class Neuron(Element):
         self.output = self.v - self.v0 # FIXME 
         
         # FIXME: Исправить и раскомментировать!!!
-        self.IappFunc = self.input # FIXME: тестово корректирую: добавила скобочки 
+        self.IappFunc = self.input 
+        ''' FIXME: тестово корректирую: добавила скобочки 
+        FIXME Для рецептора IappFunc'ом будет объект класса property, что херня
+        '''
         # Хорошо бы проверку на callable выполнить именно здесь: 
 
         if callable(self.IappFunc): 
+            '''
+            Что делать, если: 
+            а) IappFunc собственно функция; 
+            б) IappFunc элемент класса property от входного элемента? 
+            '''
             print("Тута править нада!") 
         try: 
             self.IappPars = kwargs["pars"] # FIXME: Добыть параметры для функции! 
